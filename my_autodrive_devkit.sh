@@ -6,7 +6,7 @@ source /opt/ros/humble/setup.bash
 source /home/autodrive_devkit/install/setup.bash
 
 # AutoDRIVE Devkit Workspace
-cd /home/autodrive_devkit
+#cd /home/autodrive_devkit
 
 # Launch AutoDRIVE Devkit with GUI
 ros2 launch autodrive_f1tenth simulator_bringup_rviz.launch.py
