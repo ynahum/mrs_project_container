@@ -5,7 +5,6 @@
 #include <string>
 #include <typeinfo>
 #include <cmath>
-#define _USE_MATH_DEFINES
 
 using namespace std;
 using namespace sensor_msgs::msg;
