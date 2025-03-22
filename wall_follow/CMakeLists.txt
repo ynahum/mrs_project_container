@@ -27,8 +27,6 @@ foreach(PACKAGE
   ament_cmake_python
   rclcpp
   rclpy 
-  nav_msgs
-  ackermann_msgs
   sensor_msgs
   std_msgs)
 
@@ -39,7 +37,7 @@ endforeach()
 # Create Cpp executable
 add_executable(wall_follow_node src/wall_follow_node.cpp)
 ament_target_dependencies(wall_follow_node 
-  rclcpp geometry_msgs ackermann_msgs nav_msgs sensor_msgs std_msgs
+  rclcpp geometry_msgs sensor_msgs std_msgs
 )
 
 # Install Cpp executables

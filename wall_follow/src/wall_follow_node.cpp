@@ -27,11 +27,14 @@ public:
     WallFollow() : Node("wall_follow_node")
     {
         lidar_sub_ = this->create_subscription<LaserScan>(
-            lidarscan_topic, 10, std::bind(&WallFollow::scan_callback, this, std::placeholders::_1));
+            lidarscan_topic_, 10, std::bind(&WallFollow::scan_callback, this, std::placeholders::_1));
         speed_sub_ = this->create_subscription<Float32>(
             speed_topic_, 10, std::bind(&WallFollow::speed_callback, this, std::placeholders::_1));
-        steering_sub_ = this->create_subscription<Float32>(
-            steering_topic_, 10, std::bind(&WallFollow::steering_callback, this, std::placeholders::_1));
+        
+        // Publishers
+        throttle_pub_ = this->create_publisher<Float32>(throttle_command_topic_, 10);
+        steering_pub_ = this->create_publisher<Float32>(steering_command_topic_, 10);
+
         theta_rad_ = deg2rad(theta_degrees_);
         prev_t_ = get_clock()->now().seconds();
     }
@@ -64,19 +67,17 @@ private:
     // Topics
     std::string lidarscan_topic_ = "/autodrive/f1tenth_1/lidar";
     std::string speed_topic_ = "/autodrive/f1tenth_1/speed";
-    std::string steering_topic_ = "/autodrive/f1tenth_1/steering";
 
     std::string throttle_command_topic_ = "/autodrive/f1tenth_1/throttle_command";
-    std::string speed_command_topic_ = "/autodrive/f1tenth_1/speed_command";
+    std::string steering_command_topic_ = "/autodrive/f1tenth_1/steering_command";
 
     // Subscribers
     rclcpp::Subscription<LaserScan>::SharedPtr lidar_sub_;
     rclcpp::Subscription<Float32>::SharedPtr speed_sub_;
-    rclcpp::Subscription<Float32>::SharedPtr steering_sub_;
 
     // Publishers
-    rclcpp::Publisher<Float32>::SharedPtr throttle_command_pub_;
-    rclcpp::Publisher<Float32>::SharedPtr steering_command_pub_;
+    rclcpp::Publisher<Float32>::SharedPtr throttle_pub_;
+    rclcpp::Publisher<Float32>::SharedPtr steering_pub_;
 
     std::mutex speed_mutex_;
     double current_speed_;
@@ -155,9 +156,9 @@ private:
 
         float desired_speed = 2.0;  // Target speed in m/s
 
-        if (abs(angle) > deg2rad(20.0)) {
+        if (abs(angle_command) > deg2rad(20.0)) {
             desired_speed = 1.5;
-        } else if (abs(angle) > deg2rad(10.0)) {
+        } else if (abs(angle_command) > deg2rad(10.0)) {
             desired_speed = 1.75;
         }
 
@@ -172,8 +173,18 @@ private:
             throttle_command = -1;
         }
 
-        throttle_command_topic_
-        speed_
+        // Publish throttle
+        auto throttle_msg = std_msgs::msg::Float32();
+        throttle_msg.data = throttle_command;
+        throttle_pub_->publish(throttle_msg);
+
+        // Publish steering
+        auto steering_msg = std_msgs::msg::Float32();
+        steering_msg.data = angle_command;
+        steering_pub_->publish(steering_msg);
+
+        RCLCPP_INFO(this->get_logger(), "Speed: %.2f, Throttle: %.2f, Steering: %.2f",
+                    current_speed_, throttle_msg.data, steering_msg.data);
     }
 
     void scan_callback(const LaserScan::ConstSharedPtr scan_msg) 
@@ -226,6 +237,7 @@ private:
     }
 
 };
+
 int main(int argc, char ** argv) {
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<WallFollow>());
