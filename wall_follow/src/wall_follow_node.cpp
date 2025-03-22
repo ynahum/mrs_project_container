@@ -1,15 +1,15 @@
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
-#include "nav_msgs/msg/odometry.hpp"
-#include "ackermann_msgs/msg/ackermann_drive_stamped.hpp"
+#include "std_msgs/msg/float32.hpp"
+
+#include <mutex>
 #include <string>
 #include <typeinfo>
 #include <cmath>
 
 using namespace std;
 using namespace sensor_msgs::msg;
-using namespace nav_msgs::msg;
-using namespace ackermann_msgs::msg;
+using namespace std_msgs::msg;
 
 double deg2rad(double deg) 
 {
@@ -26,9 +26,12 @@ class WallFollow : public rclcpp::Node {
 public:
     WallFollow() : Node("wall_follow_node")
     {
-        drive_pub_ = this->create_publisher<AckermannDriveStamped>(drive_topic, 10);
         lidar_sub_ = this->create_subscription<LaserScan>(
             lidarscan_topic, 10, std::bind(&WallFollow::scan_callback, this, std::placeholders::_1));
+        speed_sub_ = this->create_subscription<Float32>(
+            speed_topic_, 10, std::bind(&WallFollow::speed_callback, this, std::placeholders::_1));
+        steering_sub_ = this->create_subscription<Float32>(
+            steering_topic_, 10, std::bind(&WallFollow::steering_callback, this, std::placeholders::_1));
         theta_rad_ = deg2rad(theta_degrees_);
         prev_t_ = get_clock()->now().seconds();
     }
@@ -59,10 +62,25 @@ private:
     const double theta_front_right_ = -45;
 
     // Topics
-    std::string lidarscan_topic = "/scan";
-    std::string drive_topic = "/drive";
-    rclcpp::Publisher<AckermannDriveStamped>::SharedPtr drive_pub_;
+    std::string lidarscan_topic_ = "/autodrive/f1tenth_1/lidar";
+    std::string speed_topic_ = "/autodrive/f1tenth_1/speed";
+    std::string steering_topic_ = "/autodrive/f1tenth_1/steering";
+
+    std::string throttle_command_topic_ = "/autodrive/f1tenth_1/throttle_command";
+    std::string speed_command_topic_ = "/autodrive/f1tenth_1/speed_command";
+
+    // Subscribers
     rclcpp::Subscription<LaserScan>::SharedPtr lidar_sub_;
+    rclcpp::Subscription<Float32>::SharedPtr speed_sub_;
+    rclcpp::Subscription<Float32>::SharedPtr steering_sub_;
+
+    // Publishers
+    rclcpp::Publisher<Float32>::SharedPtr throttle_command_pub_;
+    rclcpp::Publisher<Float32>::SharedPtr steering_command_pub_;
+
+    std::mutex speed_mutex_;
+    double current_speed_;
+    float kp_speed_ = 0.4;
 
     double get_range(const float* range_data, double angle)
     {
@@ -119,36 +137,46 @@ private:
         Returns:
             None
         */
-        auto drive_msg = std::make_shared<AckermannDriveStamped>();
         double t = get_clock()->now().seconds();
-        double delta_t = t- prev_t_;
-        error_integral_ += delta_t * error;
-        double error_derivative = (error - prev_error_)/delta_t;
+        double time_delta = t - prev_t_;
+        error_integral_ += time_delta * error;
+        double error_derivative = (error - prev_error_)/time_delta;
         prev_error_ = error;
-        double angle = kp_ * error + kd_ * error_derivative + ki_ * error_integral_;
-        drive_msg->drive.steering_angle = angle;
+        double angle_command = kp_ * error + kd_ * error_derivative + ki_ * error_integral_;
         
+        double speed;
+        {
+            std::lock_guard<std::mutex> lock(speed_mutex_);
+            speed = current_speed_;  // Safely copy to a local variable
+        }
+
         //RCLCPP_INFO(get_logger(), "error = %f", error);
         //RCLCPP_INFO(get_logger(), "angle = %f", angle);
-        
+
+        float desired_speed = 2.0;  // Target speed in m/s
+
         if (abs(angle) > deg2rad(20.0)) {
-            drive_msg->drive.speed = 1.5;
+            desired_speed = 1.5;
         } else if (abs(angle) > deg2rad(10.0)) {
-            drive_msg->drive.speed = 1.75;
-        } else {
-            drive_msg->drive.speed = 2.0;
+            desired_speed = 1.75;
         }
+
+        float speed_error = desired_speed - speed;
+
+        // Simple proportional control for throttle
+        float throttle_command = kp_speed_ * speed_error;  // Adjust gain as needed
+        throttle_command = std::clamp(throttle_command, -1.0f, 1.0f);  // Limit throttle range
 
         if (is_dead_end_) {
-            drive_msg->drive.steering_angle = -1.5;
-            drive_msg->drive.speed = 1.5;
+            angle_command = -1.5;
+            throttle_command = -1;
         }
 
-        drive_pub_->publish(*drive_msg);
-
+        throttle_command_topic_
+        speed_
     }
 
-    void scan_callback(const sensor_msgs::msg::LaserScan::ConstSharedPtr scan_msg) 
+    void scan_callback(const LaserScan::ConstSharedPtr scan_msg) 
     {
         /*
         Callback function for LaserScan messages. Calculate the error and publish the drive message in this function.
@@ -190,6 +218,11 @@ private:
         }
 
         pid_control(get_error(scan_msg->ranges.data(), DIST));
+    }
+
+    void speed_callback(const std_msgs::msg::Float32::SharedPtr msg) {
+        std::lock_guard<std::mutex> lock(speed_mutex_);
+        current_speed_ = msg->data;
     }
 
 };
