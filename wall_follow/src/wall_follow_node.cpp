@@ -81,7 +81,7 @@ private:
 
     std::mutex speed_mutex_;
     double current_speed_;
-    float kp_speed_ = 0.4;
+    float kp_speed_ = 0.7;
 
     double get_range(const float* range_data, double angle)
     {
