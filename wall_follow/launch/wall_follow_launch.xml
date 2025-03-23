@@ -1,0 +1,8 @@
+<launch>
+    <!-- Start the wall_follow_node -->
+    <node pkg="wall_follow" exec="wall_follow_node" name="wall_follow_node" output="screen" />
+
+    <!-- Include the launch file from another package -->
+    <include file="$(find-pkg-share autodrive_f1tenth)/launch/simulator_bringup_rviz.launch.py" />
+</launch>
+

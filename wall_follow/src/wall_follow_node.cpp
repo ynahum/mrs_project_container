@@ -7,6 +7,8 @@
 #include <typeinfo>
 #include <cmath>
 
+#define _USE_MATH_DEFINES
+
 using namespace std;
 using namespace sensor_msgs::msg;
 using namespace std_msgs::msg;
@@ -41,7 +43,7 @@ public:
 
 private:
     // PID CONTROL PARAMS
-    double kp_ = 1.2;
+    double kp_ = 1.4;
     double kd_ = 0.1;
     double ki_ = 0;//0.0000015;
 
@@ -56,10 +58,10 @@ private:
     double prev_error_ = 0.0;
     double error_integral_ = 0.0;
 
-    bool is_dead_end_ = false;
+    //bool is_dead_end_ = false;
 
     const uint32_t theta_degrees_ = 35;
-    const double DIST = 0.9;
+    const double DIST = 0.8; // Desired distance to the wall in meters
     const double L = 0.5; // Lookahead distance in meters
     const double theta_front_left_ = 45;
     const double theta_front_right_ = -45;
@@ -81,7 +83,7 @@ private:
 
     std::mutex speed_mutex_;
     double current_speed_;
-    float kp_speed_ = 0.7;
+    float kp_speed_ = 0.1;
 
     double get_range(const float* range_data, double angle)
     {
@@ -151,15 +153,15 @@ private:
             speed = current_speed_;  // Safely copy to a local variable
         }
 
-        //RCLCPP_INFO(get_logger(), "error = %f", error);
-        //RCLCPP_INFO(get_logger(), "angle = %f", angle);
+        RCLCPP_INFO(get_logger(), "error = %f", error);
+        RCLCPP_INFO(get_logger(), "angle = %f", angle_command);
 
-        float desired_speed = 2.0;  // Target speed in m/s
+        float desired_speed = 1.0;  // Target speed in m/s
 
         if (abs(angle_command) > deg2rad(20.0)) {
-            desired_speed = 1.5;
+            desired_speed = 0.7;
         } else if (abs(angle_command) > deg2rad(10.0)) {
-            desired_speed = 1.75;
+            desired_speed = 0.85;
         }
 
         float speed_error = desired_speed - speed;
@@ -168,10 +170,10 @@ private:
         float throttle_command = kp_speed_ * speed_error;  // Adjust gain as needed
         throttle_command = std::clamp(throttle_command, -1.0f, 1.0f);  // Limit throttle range
 
-        if (is_dead_end_) {
-            angle_command = -1.5;
-            throttle_command = -1;
-        }
+        //if (is_dead_end_) {
+        //    angle_command = -1.5;
+        //    throttle_command = -1;
+        //}
 
         // Publish throttle
         auto throttle_msg = std_msgs::msg::Float32();
@@ -210,23 +212,23 @@ private:
             first_scan_read_ = false;
         }
 
-        const float* ranges = scan_msg->ranges.data();
+        //const float* ranges = scan_msg->ranges.data();
 
         // Get two lidar readings at forward left and forward right
-        double range_front_left = get_range(ranges, deg2rad(theta_front_left_));
-        double range_front_right = get_range(ranges, deg2rad(theta_front_right_));
+        //double range_front_left = get_range(ranges, deg2rad(theta_front_left_));
+        //double range_front_right = get_range(ranges, deg2rad(theta_front_right_));
 
 
-        double range_diff = range_front_right - range_front_left;
-        is_dead_end_ = false;
+        //double range_diff = range_front_right - range_front_left;
+        //is_dead_end_ = false;
 
-        if (range_diff > 1 && range_front_left < 3) {
-            RCLCPP_INFO(get_logger(), "range_front_left = %f", range_front_left);
-            RCLCPP_INFO(get_logger(), "range_front_right = %f", range_front_right);
-            is_dead_end_ = true;
-        } else {
-            is_dead_end_ = false;
-        }
+        //if (range_diff > 1 && range_front_left < 3) {
+        //    RCLCPP_INFO(get_logger(), "range_front_left = %f", range_front_left);
+        //    RCLCPP_INFO(get_logger(), "range_front_right = %f", range_front_right);
+        //    is_dead_end_ = true;
+        //} else {
+        //    is_dead_end_ = false;
+        //}
 
         pid_control(get_error(scan_msg->ranges.data(), DIST));
     }

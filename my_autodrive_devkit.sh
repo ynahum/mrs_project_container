@@ -10,9 +10,10 @@ source /home/dev/ros_ws/install/setup.bash
 #cd /home/autodrive_devkit
 
 # Launch AutoDRIVE Devkit with GUI
-ros2 launch autodrive_f1tenth simulator_bringup_rviz.launch.py
+#ros2 launch autodrive_f1tenth simulator_bringup_rviz.launch.py
 
 # Launch AutoDRIVE Devkit Headless
 # ros2 launch autodrive_f1tenth simulator_bringup_headless.launch.py
 
-cd dev/ros_ws/src/
+# launch wall_follow which also launches AutoDRIVE Devkit with GUI and Rviz
+ros2 launch wall_follow wall_follow_launch.xml
