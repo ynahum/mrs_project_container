@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+
 
 # Setup development environment
 source /opt/ros/humble/setup.bash
