@@ -84,6 +84,8 @@ private:
     std::mutex speed_mutex_;
     double current_speed_;
     float kp_speed_ = 0.1;
+    float kd_speed_ = 0.7;
+    float prev_speed_error_ = 0;
 
     double get_range(const float* range_data, double angle)
     {
@@ -167,7 +169,8 @@ private:
         float speed_error = desired_speed - speed;
 
         // Simple proportional control for throttle
-        float throttle_command = kp_speed_ * speed_error;  // Adjust gain as needed
+        float throttle_command = kp_speed_ * speed_error + kd_speed_ * (speed_error - prev_speed_error_);  // Adjust gain as needed
+        prev_speed_error_ = speed_error;
         throttle_command = std::clamp(throttle_command, -1.0f, 1.0f);  // Limit throttle range
 
         //if (is_dead_end_) {
