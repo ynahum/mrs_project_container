@@ -83,8 +83,8 @@ private:
 
     std::mutex speed_mutex_;
     double current_speed_;
-    float kp_speed_ = 0.1;
-    float kd_speed_ = 0.7;
+    float kp_speed_ = 0.04;
+    float kd_speed_ = 0;
     float prev_speed_error_ = 0;
 
     double get_range(const float* range_data, double angle)
@@ -155,23 +155,29 @@ private:
             speed = current_speed_;  // Safely copy to a local variable
         }
 
-        RCLCPP_INFO(get_logger(), "error = %f", error);
-        RCLCPP_INFO(get_logger(), "angle = %f", angle_command);
+        RCLCPP_INFO(get_logger(), "error = %.2f, angle_command = %.2f,", error, angle_command);
 
         float desired_speed = 1.0;  // Target speed in m/s
 
+        #if 0
         if (abs(angle_command) > deg2rad(20.0)) {
             desired_speed = 0.7;
         } else if (abs(angle_command) > deg2rad(10.0)) {
             desired_speed = 0.85;
         }
+        #endif
 
         float speed_error = desired_speed - speed;
 
         // Simple proportional control for throttle
-        float throttle_command = kp_speed_ * speed_error + kd_speed_ * (speed_error - prev_speed_error_);  // Adjust gain as needed
+        double speed_error_derivative = (speed_error - prev_speed_error_)/time_delta;
+        float throttle_command = kp_speed_ * speed_error + kd_speed_ * speed_error_derivative;  // Adjust gain as needed
         prev_speed_error_ = speed_error;
         throttle_command = std::clamp(throttle_command, -1.0f, 1.0f);  // Limit throttle range
+
+
+        RCLCPP_INFO(this->get_logger(), "speed: %.2f, speed_error: %.2f, speed_error_derivative: %.2f, throttle_command: %.2f",
+            speed, speed_error, speed_error_derivative, throttle_command);
 
         //if (is_dead_end_) {
         //    angle_command = -1.5;
@@ -188,8 +194,6 @@ private:
         steering_msg.data = angle_command;
         steering_pub_->publish(steering_msg);
 
-        RCLCPP_INFO(this->get_logger(), "Speed: %.2f, Throttle: %.2f, Steering: %.2f",
-                    current_speed_, throttle_msg.data, steering_msg.data);
     }
 
     void scan_callback(const LaserScan::ConstSharedPtr scan_msg) 
