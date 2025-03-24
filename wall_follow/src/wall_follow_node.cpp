@@ -172,7 +172,7 @@ private:
             speed = current_speed_;  // Safely copy to a local variable
         }
 
-        RCLCPP_INFO(get_logger(), "error = %.2f, angle_command = %.2f,", error, angle_command);
+        //RCLCPP_INFO(get_logger(), "error = %.2f, angle_command = %.2f,", error, angle_command);
 
 #if 0
         if (abs(angle_command) > deg2rad(20.0)) {
@@ -191,8 +191,8 @@ private:
         throttle_command = std::clamp(throttle_command, -1.0f, 1.0f);  // Limit throttle range
 
 
-        RCLCPP_INFO(this->get_logger(), "speed: %.2f, speed_error: %.2f, speed_error_derivative: %.2f, throttle_command: %.2f",
-            speed, speed_error, speed_error_derivative, throttle_command);
+        //RCLCPP_INFO(this->get_logger(), "speed: %.2f, speed_error: %.2f, speed_error_derivative: %.2f, throttle_command: %.2f",
+        //    speed, speed_error, speed_error_derivative, throttle_command);
 
         //if (is_dead_end_) {
         //    angle_command = -1.5;
