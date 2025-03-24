@@ -1,7 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <launch>
-    <!-- Start the wall_follow_node -->
-    <node pkg="wall_follow" exec="wall_follow_node" name="wall_follow_node" output="screen" />
-
+    <!-- Launch the wall_follow_node with parameters -->
+    <node pkg="wall_follow" exec="wall_follow_node" output="screen">
+        <param name="kp_speed" value="0.04"/>
+        <param name="kd_speed" value="0.0"/>
+        <param name="ref_speed" value="1.8"/>
+    </node>
     <!-- Include the launch file from another package -->
     <include file="$(find-pkg-share autodrive_f1tenth)/launch/simulator_bringup_rviz.launch.py" />
 </launch>

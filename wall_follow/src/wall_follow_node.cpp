@@ -28,6 +28,22 @@ class WallFollow : public rclcpp::Node {
 public:
     WallFollow() : Node("wall_follow_node")
     {
+        // Declare parameters with default values
+        declare_parameter("kp_speed", 0.044);
+        declare_parameter("kd_speed", 0.02);
+        declare_parameter("ref_speed", 1.02);
+
+        // Get parameter values
+        kp_speed_ = get_parameter("kp_speed").as_double();
+        kd_speed_ = get_parameter("kd_speed").as_double();
+        ref_speed_ = get_parameter("ref_speed").as_double();
+
+        // Print values to verify
+        RCLCPP_INFO(get_logger(), "kp_speed_: %f", kp_speed_);
+        RCLCPP_INFO(get_logger(), "kd_speed_: %f", kd_speed_);
+        RCLCPP_INFO(get_logger(), "ref_speed_: %f", ref_speed_);
+
+
         lidar_sub_ = this->create_subscription<LaserScan>(
             lidarscan_topic_, 10, std::bind(&WallFollow::scan_callback, this, std::placeholders::_1));
         speed_sub_ = this->create_subscription<Float32>(
@@ -83,8 +99,9 @@ private:
 
     std::mutex speed_mutex_;
     double current_speed_;
-    float kp_speed_ = 0.04;
-    float kd_speed_ = 0;
+    double kp_speed_;
+    double kd_speed_;
+    double ref_speed_;
     float prev_speed_error_ = 0;
 
     double get_range(const float* range_data, double angle)
@@ -157,17 +174,15 @@ private:
 
         RCLCPP_INFO(get_logger(), "error = %.2f, angle_command = %.2f,", error, angle_command);
 
-        float desired_speed = 1.0;  // Target speed in m/s
-
-        #if 0
+#if 0
         if (abs(angle_command) > deg2rad(20.0)) {
-            desired_speed = 0.7;
+            ref_speed_ = 0.7;
         } else if (abs(angle_command) > deg2rad(10.0)) {
-            desired_speed = 0.85;
+            ref_speed_ = 0.85;
         }
-        #endif
+#endif
 
-        float speed_error = desired_speed - speed;
+        float speed_error = ref_speed_ - speed;
 
         // Simple proportional control for throttle
         double speed_error_derivative = (speed_error - prev_speed_error_)/time_delta;
