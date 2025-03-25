@@ -29,9 +29,9 @@ public:
     WallFollow() : Node("wall_follow_node")
     {
         // Declare parameters with default values
-        declare_parameter("kp_speed", 0.044);
-        declare_parameter("kd_speed", 0.02);
-        declare_parameter("ref_speed", 1.02);
+        declare_parameter("kp_speed", 0.04);
+        declare_parameter("kd_speed", 0.0);
+        declare_parameter("ref_speed", 1.8);
 
         // Get parameter values
         kp_speed_ = get_parameter("kp_speed").as_double();
