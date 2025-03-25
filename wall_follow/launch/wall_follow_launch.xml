@@ -8,5 +8,12 @@
     </node>
     <!-- Include the launch file from another package -->
     <include file="$(find-pkg-share autodrive_f1tenth)/launch/simulator_bringup_rviz.launch.py" />
+    <node
+        pkg="slam_toolbox"
+        exec="async_slam_toolbox_node"
+        name="slam_toolbox"
+        output="screen">
+        <param from="/home/dev/ros_ws/src/config/mapper_params_online_async.yaml" />
+    </node>
 </launch>
 
