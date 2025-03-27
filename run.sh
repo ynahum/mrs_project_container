@@ -1,8 +1,7 @@
 #!/bin/bash
 set -e
 
-# Setup development environment
-source /home/dev/ros_ws/src/common.sh
+source /home/dev/ros_ws/src/setup.sh
 
 # launch wall_follow which also launches AutoDRIVE Devkit with GUI and Rviz
 ros2 launch wall_follow sim_bridge_plus_rviz_plus_slam.launch.xml

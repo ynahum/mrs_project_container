@@ -3,9 +3,9 @@
     <node pkg="autodrive_f1tenth" exec="autodrive_bridge" name="autodrive_bridge" output="screen">
         <param name="emulate_tty" type="bool" value="true"/>
     </node>
-    <node pkg="rviz2" exec="rviz2" name="rviz" output="screen" args="-d /home/dev/ros_ws/src/rviz/slam.rviz"/>
+    <node pkg="rviz2" exec="rviz2" name="rviz" output="screen" args="-d /home/dev/ros_ws/src/my_car/rviz/slam.rviz"/>
     <node pkg="slam_toolbox" exec="async_slam_toolbox_node" name="slam_toolbox" output="screen">
-        <param from="/home/dev/ros_ws/src/config/mapper_params_online_async.yaml" />
+        <param from="/home/dev/ros_ws/src/my_car/config/mapper_params_online_async.yaml" />
     </node>
 </launch>
 
