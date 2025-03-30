@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <node pkg="autodrive_f1tenth" exec="autodrive_bridge" name="autodrive_bridge" output="screen">
+        <param name="emulate_tty" type="bool" value="true"/>
+    </node>
+    <arg name="params_file" default="my_car/config/nav2_params_changed.yaml"/>
+    <arg name="map" default="my_car/maps/track1.yaml"/>
+    <include file="$(find-pkg-share nav2_bringup)/launch/bringup_launch.py">
+        <arg name="params_file" value="$(var params_file)"/>
+        <arg name="map" value="$(var map)"/>
+    </include>
+    <node pkg="rviz2" exec="rviz2" name="rviz" output="screen" args="-d /home/dev/ros_ws/src/my_car/rviz/nav2.rviz" />
+</launch>
+
