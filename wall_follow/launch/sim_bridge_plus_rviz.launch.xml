@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <node pkg="autodrive_f1tenth" exec="autodrive_bridge" name="autodrive_bridge" output="screen">
+        <param name="emulate_tty" type="bool" value="true"/>
+    </node>
+    <node pkg="rviz2" exec="rviz2" name="rviz" output="screen" args="-d /home/dev/ros_ws/src/my_car/rviz/slam.rviz"/>
+</launch>
+
