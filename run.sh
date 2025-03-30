@@ -4,10 +4,10 @@ set -e
 source /home/dev/ros_ws/src/setup.sh
 
 # launch AutoDRIVE Devkit with GUI and Rviz
-ros2 launch my_car sim_bringup_rviz.launch.xml
+#ros2 launch my_car rviz_sim_bringup.launch.xml
 
 # also slam
-#ros2 launch my_car sim_bringup_rviz_slam.launch.xml
+ros2 launch my_car slam_rviz_sim_bringup.launch.xml
 
 # wall follow launch
-#ros2 launch wall_follow wall_follow_launch.xml
+#ros2 launch my_car wf_slam_rviz_sim_bringup.launch.xml
