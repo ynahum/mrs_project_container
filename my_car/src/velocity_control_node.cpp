@@ -6,6 +6,19 @@
 class VelocityController : public rclcpp::Node {
 public:
     VelocityController() : Node("velocity_controller") {
+
+        // Declare parameters with default values
+        declare_parameter("kP_throttle", 0.04);
+        declare_parameter("kP_steering", 0.5);
+
+        // Get parameter values
+        kP_throttle_ = get_parameter("kP_throttle").as_double();
+        kP_steering_ = get_parameter("kP_steering").as_double();
+
+        // Print values to verify
+        RCLCPP_INFO(get_logger(), "kP_throttle_: %f", kP_throttle_);
+        RCLCPP_INFO(get_logger(), "kP_steering_: %f", kP_steering_);
+
         // Subscribers
         cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
             "/cmd_vel", 10, std::bind(&VelocityController::cmdVelCallback, this, std::placeholders::_1));
@@ -84,8 +97,8 @@ private:
     double current_angular_velocity_ = 0.0;
     
     // Proportional gains
-    const double kP_throttle_ = 0.04;
-    const double kP_steering_ = 0.2;
+    double kP_throttle_;
+    double kP_steering_;
 };
 
 int main(int argc, char **argv) {
