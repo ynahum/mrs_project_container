@@ -29,21 +29,30 @@ foreach(PACKAGE
   rclpy 
   sensor_msgs
   geometry_msgs
-  std_msgs)
+  std_msgs
+  tf2
+  tf2_ros)
 
   find_package(${PACKAGE} REQUIRED)
 
 endforeach()
 
-# Create Cpp executable
+# Create Cpp executables
+# Add executable for velocity control node
 add_executable(velocity_control_node src/velocity_control_node.cpp)
-ament_target_dependencies(velocity_control_node 
+ament_target_dependencies(velocity_control_node
   rclcpp geometry_msgs sensor_msgs std_msgs
+)
+
+# Add executable for initial pose publisher
+add_executable(initial_pose_publisher src/initial_pose_publisher.cpp)
+ament_target_dependencies(initial_pose_publisher
+  rclcpp geometry_msgs tf2 tf2_ros
 )
 
 # Install Cpp executables
 install(TARGETS
-  velocity_control_node
+  velocity_control_node initial_pose_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 install(

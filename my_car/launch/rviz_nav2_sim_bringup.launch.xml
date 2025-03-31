@@ -11,5 +11,12 @@
     </include>
     <node pkg="rviz2" exec="rviz2" name="rviz" output="screen" args="-d /home/dev/ros_ws/src/my_car/rviz/nav2_default.rviz" />
     <node pkg="my_car" exec="velocity_control_node" name="velocity_control_node" output="screen" />
+    <node pkg="my_car" exec="initial_pose_publisher" name="initial_pose_publisher" output="screen">
+    <!-- Position parameters -->
+    <param name="x" value="0.74"/> <param name="y" value="3.1594"/> <param name="z" value="0.0596"/>
+    <!-- Quaternion rotation parameters -->
+    <param name="qx" value="0.0037"/> <param name="qy" value="0.0037"/>
+    <param name="qz" value="-0.7071"/> <param name="qw" value="0.7071"/>
+  </node>
 </launch>
 
