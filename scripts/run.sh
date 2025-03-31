@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-source /home/dev/ros_ws/src/setup.sh
+source /home/dev/ros_ws/src/scripts/setup.sh
 
 # launch AutoDRIVE Devkit with GUI and Rviz
 #ros2 launch my_car rviz_sim_bringup.launch.xml
