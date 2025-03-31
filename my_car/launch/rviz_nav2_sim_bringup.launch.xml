@@ -10,5 +10,6 @@
         <arg name="map" value="$(var map)"/>
     </include>
     <node pkg="rviz2" exec="rviz2" name="rviz" output="screen" args="-d /home/dev/ros_ws/src/my_car/rviz/nav2_default.rviz" />
+    <node pkg="my_car" exec="velocity_control_node" name="velocity_control_node" output="screen" />
 </launch>
 
