@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-    <node pkg="autodrive_f1tenth" exec="autodrive_bridge" name="autodrive_bridge" output="screen">
-        <param name="emulate_tty" type="bool" value="true"/>
-    </node>
     <arg name="params_file" default="my_car/config/nav2_params_changed.yaml"/>
     <arg name="map" default="my_car/maps/track1.yaml"/>
     <include file="$(find-pkg-share nav2_bringup)/launch/bringup_launch.py">

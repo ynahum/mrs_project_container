@@ -160,7 +160,7 @@ global_costmap:
     ros__parameters:
       update_frequency: 1.0
       publish_frequency: 1.0
-      global_frame: world
+      global_frame: map
       robot_base_frame: f1tenth_1
       use_sim_time: True
       robot_radius: 0.22

@@ -40,7 +40,7 @@ public:
 
 private:
     void checkTransformAndPublish() {
-        std::string base_frame = "map";
+        std::string base_frame = "world";
         std::string target_frame = "f1tenth_1";
         try {
             // Check if transform exists
@@ -59,7 +59,7 @@ private:
     void publishInitialPose() {
         geometry_msgs::msg::PoseWithCovarianceStamped pose_msg;
         pose_msg.header.stamp = this->now();
-        pose_msg.header.frame_id = "map";
+        pose_msg.header.frame_id = "world";
 
         pose_msg.pose.pose.position.x = x_;
         pose_msg.pose.pose.position.y = y_;
