@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-    <include file="$(find my_car)/launch/bridge.launch.xml"/>
+    <include file="$(find-pkg-share my_car)/launch/bridge.launch.xml"/>
 
     <arg name="rviz_config" default="$(find-pkg-share autodrive_f1tenth)/rviz/simulator.rviz"/>
-    <include file="$(find my_car)/launch/rviz.launch.xml">
+    <include file="$(find-pkg-share my_car)/launch/rviz.launch.xml">
         <arg name="rviz_config" value="$(var rviz_config)"/>
     </include>
 </launch>
