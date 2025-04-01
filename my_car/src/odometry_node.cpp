@@ -15,13 +15,13 @@ public:
     OdometryNode() : Node("odometry_node"), x_(0.0), y_(0.0), theta_(0.0) {
         // Subscribers
         left_encoder_sub_ = this->create_subscription<JointState>(
-            "/autodrive/f1tenth_1/left_encoder", 100,
+            "/autodrive/f1tenth_1/left_encoder", 10,
             std::bind(&OdometryNode::leftEncoderCallback, this, std::placeholders::_1));
         right_encoder_sub_ = this->create_subscription<JointState>(
-            "/autodrive/f1tenth_1/right_encoder", 100,
+            "/autodrive/f1tenth_1/right_encoder", 10,
             std::bind(&OdometryNode::rightEncoderCallback, this, std::placeholders::_1));
         imu_sub_ = this->create_subscription<Imu>(
-            "/autodrive/f1tenth_1/imu", 100,
+            "/autodrive/f1tenth_1/imu", 10,
             std::bind(&OdometryNode::imuCallback, this, std::placeholders::_1));
 
         // Publishers
@@ -33,27 +33,30 @@ public:
 
 private:
     void leftEncoderCallback(const JointState::SharedPtr msg) {
+        //RCLCPP_INFO(get_logger(), "leftEncoderCallback");
         double current_position = msg->position[0];
         rclcpp::Time current_time = this->now();
         double dt = (current_time - left_wheel_prev_time_).seconds();
         left_wheel_speed_ = WHEEL_RADIUS_ * (current_position - left_wheel_prev_position_) / dt;
-        updateOdometry();
+        //updateOdometry();
         left_wheel_prev_time_ = current_time;
         left_wheel_prev_position_ = current_position;
     }
 
     void rightEncoderCallback(const JointState::SharedPtr msg) {
+        //RCLCPP_INFO(get_logger(), "rightEncoderCallback");
         double current_position = msg->position[0];
         rclcpp::Time current_time = this->now();
         double dt = (current_time - right_wheel_prev_time_).seconds();
         right_wheel_speed_ = WHEEL_RADIUS_ * (current_position - right_wheel_prev_position_) / dt;
-        updateOdometry();
+        //updateOdometry();
         right_wheel_prev_time_ = current_time;
         right_wheel_prev_position_ = current_position;
     }
 
     void imuCallback(const Imu::SharedPtr msg) {
         angular_velocity_ = msg->angular_velocity.z;
+        updateOdometry();
     }
 
     void updateOdometry() {
@@ -67,7 +70,7 @@ private:
         y_ += linear_velocity * sin(theta_) * dt;
 
         //RCLCPP_INFO(get_logger(), "call publishOdometry");
-        publishOdometry();
+        //publishOdometry();
 
         //RCLCPP_INFO(get_logger(), "call publishTransform");
         publishTransform();
