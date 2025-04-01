@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-    <include file="$(find my_car)/launch/bridge_rviz.launch.xml">
+    <include file="$(find my_car)/launch/bridge.launch.xml"/>
+
+    <include file="$(find my_car)/launch/rviz.launch.xml">
         <arg name="rviz_config" value="/home/dev/ros_ws/src/my_car/rviz/slam.rviz"/>
     </include>
+
     <include file="$(find my_car)/launch/slam.launch.xml"/>
 </launch>
 

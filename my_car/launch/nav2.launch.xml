@@ -6,6 +6,7 @@
         <arg name="params_file" value="$(var params_file)"/>
         <arg name="map" value="$(var map)"/>
     </include>
+
     <node pkg="my_car" exec="velocity_control_node" name="velocity_control_node" output="screen" />
 </launch>
 
