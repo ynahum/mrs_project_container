@@ -50,9 +50,16 @@ ament_target_dependencies(initial_pose_publisher
   rclcpp geometry_msgs tf2 tf2_ros
 )
 
+# Add executable for wall follow node
+add_executable(wall_follow_node src/wall_follow_node.cpp)
+ament_target_dependencies(wall_follow_node 
+  rclcpp geometry_msgs sensor_msgs std_msgs
+)
+
+
 # Install Cpp executables
 install(TARGETS
-  velocity_control_node initial_pose_publisher
+  velocity_control_node initial_pose_publisher wall_follow_node
   DESTINATION lib/${PROJECT_NAME})
 
 install(

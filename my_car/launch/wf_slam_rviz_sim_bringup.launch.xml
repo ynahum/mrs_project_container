@@ -7,7 +7,7 @@
     <node pkg="slam_toolbox" exec="async_slam_toolbox_node" name="slam_toolbox" output="screen">
         <param from="/home/dev/ros_ws/src/my_car/config/mapper_params_online_async.yaml" />
     </node>
-    <node pkg="wall_follow" exec="wall_follow_node" output="screen">
+    <node pkg="my_car" exec="wall_follow_node" output="screen">
         <param name="kp_speed" value="0.04"/>
         <param name="kd_speed" value="0.0"/>
         <param name="ref_speed" value="1.8"/>
