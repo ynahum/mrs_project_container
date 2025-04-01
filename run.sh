@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-source /home/dev/ros_ws/src/scripts/setup.sh
+source /home/dev/ros_ws/src/setup.sh
 
 # launch nav2 and Rviz
 ros2 launch my_car nav2.launch.xml
