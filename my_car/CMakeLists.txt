@@ -31,13 +31,21 @@ foreach(PACKAGE
   geometry_msgs
   std_msgs
   tf2
-  tf2_ros)
+  tf2_ros
+  nav_msgs)
 
   find_package(${PACKAGE} REQUIRED)
 
 endforeach()
 
 # Create Cpp executables
+
+# Add executable for velocity control node
+add_executable(odometry_node src/odometry_node.cpp)
+ament_target_dependencies(odometry_node
+  rclcpp geometry_msgs sensor_msgs nav_msgs tf2_ros std_msgs
+)
+
 # Add executable for velocity control node
 add_executable(velocity_control_node src/velocity_control_node.cpp)
 ament_target_dependencies(velocity_control_node
@@ -59,7 +67,10 @@ ament_target_dependencies(wall_follow_node
 
 # Install Cpp executables
 install(TARGETS
-  velocity_control_node initial_pose_publisher wall_follow_node
+  velocity_control_node
+  initial_pose_publisher
+  wall_follow_node
+  odometry_node
   DESTINATION lib/${PROJECT_NAME})
 
 install(

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <arg name="rviz_config" default="$(find-pkg-share autodrive_f1tenth)/rviz/simulator.rviz"/>
+    <node pkg="rviz2" exec="rviz2" name="rviz" output="screen" args="-d $(var rviz_config)" />
+</launch>
+
