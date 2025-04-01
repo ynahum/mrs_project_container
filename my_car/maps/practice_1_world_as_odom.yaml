@@ -1,4 +1,4 @@
-image: practice_world_as_odom.pgm
+image: practice_1_world_as_odom.pgm
 mode: trinary
 resolution: 0.05
 origin: [-3.74, -8.48, 0]
