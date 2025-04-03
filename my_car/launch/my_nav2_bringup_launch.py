@@ -30,7 +30,7 @@ from nav2_common.launch import RewrittenYaml, ReplaceString
 
 def generate_launch_description():
 
-    print('!'*20)
+    print('@'*20)
     print('in my_nav2_bringup_launch.py')
 
     # Get the launch directory
@@ -39,7 +39,6 @@ def generate_launch_description():
 
     # Create the launch configuration variables
     namespace = LaunchConfiguration('namespace')
-    use_namespace = LaunchConfiguration('use_namespace')
     map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
@@ -62,15 +61,6 @@ def generate_launch_description():
         'use_sim_time': use_sim_time,
         'yaml_filename': map_yaml_file}
 
-    # Only it applys when `use_namespace` is True.
-    # '<robot_namespace>' keyword shall be replaced by 'namespace' launch argument
-    # in config file 'nav2_multirobot_params.yaml' as a default & example.
-    # User defined config file should contain '<robot_namespace>' keyword for the replacements.
-    params_file = ReplaceString(
-        source_file=params_file,
-        replacements={'<robot_namespace>': ('/', namespace)},
-        condition=IfCondition(use_namespace))
-
     configured_params = ParameterFile(
         RewrittenYaml(
             source_file=params_file,
@@ -86,11 +76,6 @@ def generate_launch_description():
         'namespace',
         default_value='',
         description='Top-level namespace')
-
-    declare_use_namespace_cmd = DeclareLaunchArgument(
-        'use_namespace',
-        default_value='false',
-        description='Whether to apply a namespace to the navigation stack')
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
@@ -124,9 +109,6 @@ def generate_launch_description():
 
     # Specify the actions
     bringup_cmd_group = GroupAction([
-        PushRosNamespace(
-            condition=IfCondition(use_namespace),
-            namespace=namespace),
 
         Node(
             condition=IfCondition(use_composition),
@@ -169,7 +151,6 @@ def generate_launch_description():
 
     # Declare the launch options
     ld.add_action(declare_namespace_cmd)
-    ld.add_action(declare_use_namespace_cmd)
     ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
