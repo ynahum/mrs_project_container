@@ -2,7 +2,7 @@
 <launch>
     <arg name="params_file" default="/home/dev/ros_ws/src/my_car/config/nav2_params.yaml"/>
     <arg name="map" default="/home/dev/ros_ws/src/my_car/maps/practice_1_world_as_odom.yaml"/>
-    <include file="$(find-pkg-share nav2_bringup)/launch/bringup_launch.py">
+    <include file="$(find-pkg-share my_car)/launch/my_nav2_bringup_launch.py">
         <arg name="params_file" value="$(var params_file)"/>
         <arg name="map" value="$(var map)"/>
     </include>
