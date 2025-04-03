@@ -3,7 +3,7 @@
     <include file="$(find-pkg-share my_car)/launch/bridge.launch.xml"/>
 
     <include file="$(find-pkg-share my_car)/launch/rviz.launch.xml">
-        <arg name="rviz_config" value="/home/dev/ros_ws/src/my_car/rviz/nav2_default.rviz"/>
+        <arg name="rviz_config" value="/home/dev/ros_ws/src/my_car/rviz/nav2_all.rviz"/>
     </include>
 
     <include file="$(find-pkg-share my_car)/launch/nav2.launch.xml"/>
