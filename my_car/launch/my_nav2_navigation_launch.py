@@ -27,6 +27,10 @@ from nav2_common.launch import RewrittenYaml
 
 
 def generate_launch_description():
+
+    print('*'*20)
+    print('in my_nav2_navigation_launch.py')
+
     # Get the launch directory
     bringup_dir = get_package_share_directory('nav2_bringup')
 
