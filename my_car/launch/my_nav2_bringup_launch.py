@@ -30,7 +30,7 @@ from nav2_common.launch import RewrittenYaml, ReplaceString
 
 def generate_launch_description():
 
-    print('@'*20)
+    print('%'*20)
     print('in my_nav2_bringup_launch.py')
 
     # Get the launch directory

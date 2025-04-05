@@ -25,10 +25,11 @@ from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode, ParameterFile
 from nav2_common.launch import RewrittenYaml
 
+use_amcl = True 
 
 def generate_launch_description():
 
-    print('@'*20)
+    print('^'*20)
     print('in my_nav2_localization_launch.py')
 
     # Get the launch directory
@@ -45,7 +46,9 @@ def generate_launch_description():
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
 
-    lifecycle_nodes = ['map_server', 'amcl']
+    lifecycle_nodes = ['map_server']
+    if use_amcl:
+        lifecycle_nodes.append('amcl')
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
@@ -111,19 +114,30 @@ def generate_launch_description():
         'log_level', default_value='info',
         description='log level')
 
-    load_nodes = GroupAction(
-        condition=IfCondition(PythonExpression(['not ', use_composition])),
-        actions=[
-            Node(
-                package='nav2_map_server',
-                executable='map_server',
-                name='map_server',
-                output='screen',
-                respawn=use_respawn,
-                respawn_delay=2.0,
-                parameters=[configured_params],
-                arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings),
+    nodes_to_load = [
+        Node(
+            package='nav2_map_server',
+            executable='map_server',
+            name='map_server',
+            output='screen',
+            respawn=use_respawn,
+            respawn_delay=2.0,
+            parameters=[configured_params],
+            arguments=['--ros-args', '--log-level', log_level],
+            remappings=remappings),
+        Node(
+            package='nav2_lifecycle_manager',
+            executable='lifecycle_manager',
+            name='lifecycle_manager_localization',
+            output='screen',
+            arguments=['--ros-args', '--log-level', log_level],
+            parameters=[{'use_sim_time': use_sim_time},
+                        {'autostart': autostart},
+                        {'node_names': lifecycle_nodes}])
+        ]
+
+    if use_amcl:
+        nodes_to_load.append(
             Node(
                 package='nav2_amcl',
                 executable='amcl',
@@ -133,33 +147,27 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings),
+                remappings=remappings))
+    else:
+        nodes_to_load.append(
             Node(
-                package='nav2_lifecycle_manager',
-                executable='lifecycle_manager',
-                name='lifecycle_manager_localization',
+                package='my_car',
+                executable='tf_relay_node_namespace',
+                name='tf_relay_node',
                 output='screen',
-                arguments=['--ros-args', '--log-level', log_level],
-                parameters=[{'use_sim_time': use_sim_time},
-                            {'autostart': autostart},
-                            {'node_names': lifecycle_nodes}])
-        ]
+            )
+        )
+
+    load_nodes = GroupAction(
+        condition=IfCondition(PythonExpression(['not ', use_composition])),
+        actions=nodes_to_load
     )
 
-    load_composable_nodes = LoadComposableNodes(
-        condition=IfCondition(use_composition),
-        target_container=container_name_full,
-        composable_node_descriptions=[
+    composable_nodes_to_load = [
             ComposableNode(
                 package='nav2_map_server',
                 plugin='nav2_map_server::MapServer',
                 name='map_server',
-                parameters=[configured_params],
-                remappings=remappings),
-            ComposableNode(
-                package='nav2_amcl',
-                plugin='nav2_amcl::AmclNode',
-                name='amcl',
                 parameters=[configured_params],
                 remappings=remappings),
             ComposableNode(
@@ -169,7 +177,30 @@ def generate_launch_description():
                 parameters=[{'use_sim_time': use_sim_time,
                              'autostart': autostart,
                              'node_names': lifecycle_nodes}]),
-        ],
+    ]
+
+    if use_amcl:
+        composable_nodes_to_load.append(
+                ComposableNode(
+                package='nav2_amcl',
+                plugin='nav2_amcl::AmclNode',
+                name='amcl',
+                parameters=[configured_params],
+                remappings=remappings)
+            )
+    else:
+        composable_nodes_to_load.append(
+                ComposableNode(
+                    package='my_car',
+                    plugin='tf_relay_node_namespace::TfRelayNode',
+                    name='tf_relay_node',
+                )
+            )
+
+    load_composable_nodes = LoadComposableNodes(
+        condition=IfCondition(use_composition),
+        target_container=container_name_full,
+        composable_node_descriptions=composable_nodes_to_load
     )
 
     # Create the launch description and populate
