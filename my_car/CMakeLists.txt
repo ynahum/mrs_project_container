@@ -26,6 +26,7 @@ foreach(PACKAGE
   ament_cmake 
   ament_cmake_python
   rclcpp
+  rclcpp_components
   rclpy 
   sensor_msgs
   geometry_msgs
@@ -64,6 +65,20 @@ ament_target_dependencies(wall_follow_node
   rclcpp geometry_msgs sensor_msgs std_msgs
 )
 
+# Add executable and composable version for tf_relay to add map->f1tenth_1 from world->f1tenth_1
+# when AMCL is disabled
+add_executable(tf_relay_node src/tf_relay_node.cpp)
+ament_target_dependencies(tf_relay_node
+ rclcpp tf2_ros geometry_msgs
+)
+
+add_library(tf_relay_node_composable SHARED src/tf_relay_lib.cpp)
+ament_target_dependencies(tf_relay_node_composable 
+ rclcpp tf2_ros geometry_msgs rclcpp_components
+)
+
+rclcpp_components_register_nodes(tf_relay_node_composable "tf_relay_node_namespace::TfRelayNode")
+
 
 # Install Cpp executables
 install(TARGETS
@@ -71,6 +86,8 @@ install(TARGETS
   initial_pose_publisher
   wall_follow_node
   odometry_node
+  tf_relay_node
+  tf_relay_node_composable
   DESTINATION lib/${PROJECT_NAME})
 
 install(
