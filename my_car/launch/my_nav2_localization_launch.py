@@ -152,7 +152,7 @@ def generate_launch_description():
         nodes_to_load.append(
             Node(
                 package='my_car',
-                executable='tf_relay_node_namespace',
+                executable='tf_relay_node',
                 name='tf_relay_node',
                 output='screen',
             )
