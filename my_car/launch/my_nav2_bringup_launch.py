@@ -34,8 +34,9 @@ def generate_launch_description():
     # print('in my_nav2_bringup_launch.py')
 
     # Get the launch directory
-    bringup_dir = get_package_share_directory('my_car')
-    launch_dir = os.path.join(bringup_dir, 'launch')
+    my_car_dir = get_package_share_directory('my_car')
+    launch_dir = os.path.join(my_car_dir, 'launch')
+    config_dir = os.path.join(my_car_dir, 'config')
 
     # Create the launch configuration variables
     namespace = LaunchConfiguration('namespace')
@@ -88,7 +89,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(bringup_dir, 'params', 'nav2_params.yaml'),
+        default_value=os.path.join(config_dir, 'nav2_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes')
 
     declare_autostart_cmd = DeclareLaunchArgument(
