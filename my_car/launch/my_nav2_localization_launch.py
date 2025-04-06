@@ -29,8 +29,8 @@ use_amcl = False
 
 def generate_launch_description():
 
-    print('$'*30)
-    print('in my_nav2_localization_launch.py')
+    # print('$'*30)
+    # print('in my_nav2_localization_launch.py')
 
     # Get the launch directory
     my_car_dir = get_package_share_directory('my_car')
