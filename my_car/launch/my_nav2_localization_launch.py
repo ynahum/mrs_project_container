@@ -25,11 +25,11 @@ from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode, ParameterFile
 from nav2_common.launch import RewrittenYaml
 
-use_amcl = True 
+use_amcl = False 
 
 def generate_launch_description():
 
-    print('?'*20)
+    print('$'*30)
     print('in my_nav2_localization_launch.py')
 
     # Get the launch directory
@@ -151,10 +151,16 @@ def generate_launch_description():
     else:
         nodes_to_load.append(
             Node(
-                package='my_car',
-                executable='tf_relay_node',
-                name='tf_relay_node',
-                output='screen',
+                package='tf2_ros',
+                executable='static_transform_publisher',
+                name='static_map_to_world_tf',
+                arguments=[
+                    '--x', '0', '--y', '0', '--z', '0',
+                    '--roll', '0', '--pitch', '0', '--yaw', '0',
+                    '--frame-id', 'map',
+                    '--child-frame-id', 'world'
+                ],
+                output='screen'
             )
         )
 
@@ -190,10 +196,16 @@ def generate_launch_description():
             )
     else:
         composable_nodes_to_load.append(
-                ComposableNode(
-                    package='my_car',
-                    plugin='tf_relay_node_namespace::TfRelayNode',
-                    name='tf_relay_node',
+            ComposableNode(
+                    package='tf2_ros',
+                    plugin='tf2_ros::StaticTransformBroadcasterNode',
+                    name='static_tf_pub',
+                    parameters=[{
+                        'frame_id': 'map',
+                        'child_frame_id': 'world',
+                        'translation': {'x': 0.0, 'y': 0.0, 'z': 0.0},
+                        'rotation': {'x': 0.0, 'y': 0.0, 'z': 0.0, 'w': 1.0},
+                    }]
                 )
             )
 
