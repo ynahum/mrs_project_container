@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-    <node pkg="my_car" exec="odometry_node" name="odometry_node" output="screen"/>
+    <!-- <node pkg="my_car" exec="odometry_node" name="odometry_node" output="screen"/> -->
     <node pkg="slam_toolbox" exec="async_slam_toolbox_node" name="slam_toolbox" output="screen">
         <param from="/home/dev/ros_ws/src/my_car/config/secondary/mapper_params_online_async.yaml" />
         <param name="log_level" type="str" value="warn"/>

@@ -2,7 +2,7 @@
 <launch>
     <!-- <arg name="params_file" default="$(find-pkg-share my_car)/config/secondary/nav2_params_amcl.yaml"/> -->
     <arg name="params_file" default="$(find-pkg-share my_car)/config/nav2_params.yaml"/>
-    <arg name="map" default="$(find-pkg-share my_car)/maps/practice_1_world_as_odom.yaml"/>
+    <arg name="map" default="$(find-pkg-share my_car)/maps/practice_2_w_as_o.yaml"/>
     <include file="$(find-pkg-share my_car)/launch/my_nav2_bringup_launch.py">
         <arg name="params_file" value="$(var params_file)"/>
         <arg name="map" value="$(var map)"/>
