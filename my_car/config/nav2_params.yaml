@@ -91,6 +91,7 @@ local_costmap:
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
+        sensor_frame: "lidar" # if not provided by the msg
         observation_sources: scan
         scan:
           topic: /autodrive/f1tenth_1/lidar
