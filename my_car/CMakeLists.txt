@@ -74,7 +74,7 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME})
 
 install(
-  DIRECTORY config launch maps
+  DIRECTORY config launch maps behavior_trees
   DESTINATION share/${PROJECT_NAME}
 )
 
