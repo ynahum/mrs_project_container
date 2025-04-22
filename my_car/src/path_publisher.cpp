@@ -11,7 +11,7 @@ class PathPublisherNode : public rclcpp::Node {
 public:
     PathPublisherNode() : Node("path_publisher_node") {
         std::string csv_path = this->declare_parameter<std::string>("csv_path", "/home/dev/ros_ws/src/my_car/maps/practice_2_w_as_o_centerline.csv");
-        lookahead_ = this->declare_parameter<int>("lookahead", 200);
+        lookahead_ = this->declare_parameter<int>("lookahead", 300);
 
         tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
         tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -81,8 +81,9 @@ private:
         path_msg.header.frame_id = frame_id_;
         path_msg.header.stamp = this->get_clock()->now();
 
-        for (int i = 0; i < lookahead_ && (start_idx + i) < path_points_.size(); ++i) {
-            path_msg.poses.push_back(path_points_[start_idx + i]);
+        for (int i = 0; i < lookahead_; ++i) {
+            size_t idx = (start_idx + i) % path_points_.size();
+            path_msg.poses.push_back(path_points_[idx]);
         }
         path_pub_->publish(path_msg);
     }
@@ -96,7 +97,7 @@ private:
 
     std::string frame_id_ = "map";
     std::string base_frame_ = "f1tenth_1";
-    int lookahead_ = 200;
+    int lookahead_ = 300;
 };
 
 int main(int argc, char **argv) {
