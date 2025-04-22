@@ -40,6 +40,12 @@ endforeach()
 
 # Create Cpp executables
 
+# Add executable for initial pose publisher
+add_executable(path_publisher src/path_publisher.cpp)
+ament_target_dependencies(path_publisher
+  rclcpp geometry_msgs tf2 tf2_ros nav_msgs
+)
+
 # Add executable for velocity control node
 add_executable(odometry_node src/odometry_node.cpp)
 ament_target_dependencies(odometry_node
@@ -71,6 +77,7 @@ install(TARGETS
   initial_pose_publisher
   wall_follow_node
   odometry_node
+  path_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 install(
