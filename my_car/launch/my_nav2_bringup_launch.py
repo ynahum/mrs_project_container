@@ -136,7 +136,7 @@ def generate_launch_description():
             # PythonLaunchDescriptionSource(os.path.join(launch_dir, 'my_nav2_navigation_launch.py')),
             # PythonLaunchDescriptionSource(os.path.join(launch_dir, 'planner_controller_navigation_launch.py')),
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'planner_controller_navigation_launch.py')),
+            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'minimal_navigation_launch.py')),
             launch_arguments={'namespace': namespace,
                               'use_sim_time': use_sim_time,
                               'autostart': autostart,
