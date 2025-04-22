@@ -133,8 +133,10 @@ def generate_launch_description():
                               'use_respawn': use_respawn,
                               'container_name': 'nav2_container'}.items()),
 
+            # PythonLaunchDescriptionSource(os.path.join(launch_dir, 'my_nav2_navigation_launch.py')),
+            # PythonLaunchDescriptionSource(os.path.join(launch_dir, 'planner_controller_navigation_launch.py')),
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'my_minimal_nav2_navigation_launch.py')),
+            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'planner_controller_navigation_launch.py')),
             launch_arguments={'namespace': namespace,
                               'use_sim_time': use_sim_time,
                               'autostart': autostart,
