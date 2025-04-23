@@ -10,6 +10,10 @@
         <arg name="map" value="$(var map)"/>
     </include>
 
-    <node pkg="my_car" exec="velocity_control_node" name="velocity_control_node" output="screen" />
+    <node pkg="my_car" exec="velocity_control_node" name="velocity_control_node" output="screen">
+        <param name="kP_throttle" value="0.04"/>
+        <param name="kP_steering" value="1.2"/>
+    </node>
+
 </launch>
 
