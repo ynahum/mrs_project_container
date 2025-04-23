@@ -15,5 +15,7 @@
         <param name="kP_steering" value="1.2"/>
     </node>
 
+    <node pkg="my_car" exec="path_publisher" name="path_publisher_node" output="screen" />
+
 </launch>
 
