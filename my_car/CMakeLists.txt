@@ -32,7 +32,9 @@ foreach(PACKAGE
   std_msgs
   tf2
   tf2_ros
-  nav_msgs)
+  nav_msgs
+  pluginlib
+  behaviortree_cpp_v3)
 
   find_package(${PACKAGE} REQUIRED)
 
@@ -70,6 +72,19 @@ ament_target_dependencies(wall_follow_node
   rclcpp geometry_msgs sensor_msgs std_msgs
 )
 
+add_library(update_plan_from_topic_bt_node SHARED
+ src/update_plan_from_topic.cpp)
+ament_target_dependencies(update_plan_from_topic_bt_node
+  rclcpp nav_msgs geometry_msgs behaviortree_cpp_v3
+)
+
+# include(${pluginlib_INCLUDE_DIRS})
+pluginlib_export_plugin_description_file(behaviortree_cpp_v3
+ behavior_trees_plugins/bt_plugin.xml)
+
+install(TARGETS update_plan_from_topic_bt_node
+        LIBRARY DESTINATION lib)
+
 
 # Install Cpp executables
 install(TARGETS
@@ -84,5 +99,11 @@ install(
   DIRECTORY config launch maps behavior_trees
   DESTINATION share/${PROJECT_NAME}
 )
+
+install(
+  FILES behavior_trees_plugins/bt_plugin.xml
+  DESTINATION share/${PROJECT_NAME}
+)
+
 
 ament_package()
