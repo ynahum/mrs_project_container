@@ -13,8 +13,9 @@ public:
   : SyncActionNode(name, config)
   {
     node_ = rclcpp::Node::make_shared("update_plan_from_topic_bt_node");
+    RCLCPP_INFO(node_->get_logger(), "[UpdatePlanFromTopic] Constructor run!");
     path_sub_ = node_->create_subscription<nav_msgs::msg::Path>(
-      "/plan", rclcpp::QoS(1).transient_local().reliable(),
+      "/plan", rclcpp::QoS(1).durability_volatile().reliable(),
       [this](const nav_msgs::msg::Path::SharedPtr msg) {
         latest_path_ = *msg;
         path_available_ = true;
@@ -40,11 +41,15 @@ public:
 
   NodeStatus tick() override
   {
+    RCLCPP_INFO(node_->get_logger(), "Tick called");
     if (!path_available_) {
+      RCLCPP_WARN(node_->get_logger(), "No path available yet");
       return NodeStatus::FAILURE;
     }
 
+    RCLCPP_WARN(node_->get_logger(), "providedPorts: setOutput()");
     setOutput("path", latest_path_);
+
     return NodeStatus::RUNNING;
   }
 
@@ -56,8 +61,7 @@ private:
   std::thread executor_thread_;
 };
 
-
-BT_REGISTER_NODES(factory)
+extern "C" void BT_RegisterNodesFromPlugin(BT::BehaviorTreeFactory& factory)
 {
   factory.registerNodeType<UpdatePlanFromTopic>("UpdatePlanFromTopic");
 }

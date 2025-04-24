@@ -1,4 +1,4 @@
-<library path="libupdate_plan_from_topic_bt_node">
+<library path="update_plan_from_topic_bt_node">
   <class name="UpdatePlanFromTopic" type="UpdatePlanFromTopic"
          base_class_type="BT::ActionNodeBase"/>
 </library>
