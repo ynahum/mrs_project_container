@@ -40,71 +40,53 @@ foreach(PACKAGE
 
 endforeach()
 
-# Create Cpp executables
 
 # Add executable for initial pose publisher
 add_executable(path_publisher src/path_publisher.cpp)
-ament_target_dependencies(path_publisher
-  rclcpp geometry_msgs tf2 tf2_ros nav_msgs
-)
+ament_target_dependencies(path_publisher rclcpp geometry_msgs tf2 tf2_ros nav_msgs)
+install(TARGETS path_publisher DESTINATION lib/${PROJECT_NAME})
 
-# Add executable for velocity control node
+
+  # Add executable for velocity control node
 add_executable(odometry_node src/odometry_node.cpp)
-ament_target_dependencies(odometry_node
-  rclcpp geometry_msgs sensor_msgs nav_msgs tf2_ros std_msgs
-)
+ament_target_dependencies(odometry_node rclcpp geometry_msgs sensor_msgs nav_msgs tf2_ros std_msgs)
+install(TARGETS odometry_node DESTINATION lib/${PROJECT_NAME})
 
-# Add executable for velocity control node
+
+
+  # Add executable for velocity control node
 add_executable(velocity_control_node src/velocity_control_node.cpp)
-ament_target_dependencies(velocity_control_node
-  rclcpp geometry_msgs sensor_msgs std_msgs
-)
+ament_target_dependencies(velocity_control_node rclcpp geometry_msgs sensor_msgs std_msgs)
+install(TARGETS velocity_control_node DESTINATION lib/${PROJECT_NAME})
+
+
 
 # Add executable for initial pose publisher
 add_executable(initial_pose_publisher src/initial_pose_publisher.cpp)
-ament_target_dependencies(initial_pose_publisher
-  rclcpp geometry_msgs tf2 tf2_ros
-)
+ament_target_dependencies(initial_pose_publisher rclcpp geometry_msgs tf2 tf2_ros)
+install(TARGETS initial_pose_publisher DESTINATION lib/${PROJECT_NAME})
 
-# Add executable for wall follow node
+
+
+  # Add executable for wall follow node
 add_executable(wall_follow_node src/wall_follow_node.cpp)
-ament_target_dependencies(wall_follow_node 
-  rclcpp geometry_msgs sensor_msgs std_msgs
-)
+ament_target_dependencies(wall_follow_node rclcpp geometry_msgs sensor_msgs std_msgs)
+install(TARGETS wall_follow_node DESTINATION lib/${PROJECT_NAME})
 
-add_library(update_plan_from_topic_bt_node SHARED
- src/update_plan_from_topic.cpp)
+
+
+add_library(update_plan_from_topic_bt_node SHARED src/update_plan_from_topic.cpp)
 ament_target_dependencies(update_plan_from_topic_bt_node
-  rclcpp nav_msgs geometry_msgs behaviortree_cpp_v3
-)
-
+  rclcpp nav_msgs geometry_msgs pluginlib behaviortree_cpp_v3)
 pluginlib_export_plugin_description_file(behaviortree_cpp_v3
- behavior_trees_plugins/bt_plugin.xml)
-
+  behavior_trees_plugins/bt_plugin.xml)
 install(TARGETS update_plan_from_topic_bt_node
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
-)
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
+install(FILES behavior_trees_plugins/bt_plugin.xml DESTINATION share/${PROJECT_NAME})
 
-# Install Cpp executables
-install(TARGETS
-  velocity_control_node
-  initial_pose_publisher
-  wall_follow_node
-  odometry_node
-  path_publisher
-  DESTINATION lib/${PROJECT_NAME})
 
-install(
-  DIRECTORY config launch maps behavior_trees
-  DESTINATION share/${PROJECT_NAME}
-)
-
-install(
-  FILES behavior_trees_plugins/bt_plugin.xml
-  DESTINATION share/${PROJECT_NAME}
-)
-
+install(DIRECTORY config launch maps behavior_trees DESTINATION share/${PROJECT_NAME})
 
 ament_package()
