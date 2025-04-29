@@ -1,4 +1,7 @@
-<library path="update_plan_from_topic_bt_node">
-  <class name="UpdatePlanFromTopic" type="UpdatePlanFromTopic"
-    base_class_type="BT::ActionNodeBase"/>
+<library path="nav2_update_plan_from_topic_bt_node">
+  <class name="nav2_behavior_tree::UpdatePlanFromTopic"
+         type="nav2_behavior_tree::UpdatePlanFromTopic"
+         base_class_type="BT::ActionNodeBase">
+    <description>Custom BT node that updates the plan from a topic.</description>
+  </class>
 </library>

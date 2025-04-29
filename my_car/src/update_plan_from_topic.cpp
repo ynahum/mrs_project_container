@@ -2,15 +2,17 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav_msgs/msg/path.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include <behaviortree_cpp_v3/bt_factory.h>
 
-using namespace BT;
 
-class UpdatePlanFromTopic : public SyncActionNode
+namespace nav2_behavior_tree
+{
+
+class UpdatePlanFromTopic : public BT::ActionNodeBase
 {
 public:
-  UpdatePlanFromTopic(const std::string& name, const NodeConfiguration& config)
-  : SyncActionNode(name, config)
+  UpdatePlanFromTopic(const std::string& name,
+  const BT::NodeConfiguration& config)
+  : BT::ActionNodeBase(name, config)
   {
     node_ = rclcpp::Node::make_shared("update_plan_from_topic_bt_node");
     RCLCPP_INFO(node_->get_logger(), "[UpdatePlanFromTopic] Constructor run!");
@@ -34,34 +36,37 @@ public:
     }
   }
 
-  static PortsList providedPorts()
+  static BT::PortsList providedPorts()
   {
-    return { OutputPort<nav_msgs::msg::Path>("path") };
+    return { BT::OutputPort<nav_msgs::msg::Path>("path") };
   }
 
-  NodeStatus tick() override
+  BT::NodeStatus tick() override
   {
     RCLCPP_INFO(node_->get_logger(), "Tick called");
     if (!path_available_) {
       RCLCPP_WARN(node_->get_logger(), "No path available yet");
-      return NodeStatus::FAILURE;
+      return BT::NodeStatus::FAILURE;
     }
 
     RCLCPP_WARN(node_->get_logger(), "providedPorts: setOutput()");
     setOutput("path", latest_path_);
 
-    return NodeStatus::RUNNING;
+    return BT::NodeStatus::SUCCESS;
   }
 
 private:
+  void halt() override {}
   rclcpp::Node::SharedPtr node_;
   nav_msgs::msg::Path latest_path_;
   std::atomic<bool> path_available_{false};
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
   std::thread executor_thread_;
 };
+} // namespace nav2_behavior_tree
 
-extern "C" void BT_RegisterNodesFromPlugin(BT::BehaviorTreeFactory& factory)
+#include <behaviortree_cpp_v3/bt_factory.h>
+BT_REGISTER_NODES(factory)
 {
-  factory.registerNodeType<UpdatePlanFromTopic>("UpdatePlanFromTopic");
+  factory.registerNodeType<nav2_behavior_tree::UpdatePlanFromTopic>("UpdatePlanFromTopic");
 }
