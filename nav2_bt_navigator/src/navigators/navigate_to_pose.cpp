@@ -47,14 +47,14 @@ NavigateToPoseNavigator::configure(
 
   self_client_ = rclcpp_action::create_client<ActionT>(node, getName());
 
-  goal_sub_ = node->create_subscription<geometry_msgs::msg::PoseStamped>(
-    "goal_pose",
-    rclcpp::SystemDefaultsQoS(),
-    std::bind(&NavigateToPoseNavigator::onGoalPoseReceived, this, std::placeholders::_1));
+  plan_sub_ = node->create_subscription<nav_msgs::msg::Path>(
+    "plan",
+    rclcpp::QoS(1).durability_volatile().reliable(),
+    std::bind(&NavigateToPoseNavigator::onPlanReceived, this, std::placeholders::_1));
 
-  RCLCPP_INFO(logger_, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  RCLCPP_INFO(logger_, "My configure (navigate_to_pose)");
-  RCLCPP_INFO(logger_, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  RCLCPP_INFO(logger_, "-------------------------------");
+  RCLCPP_INFO(logger_, "My navigate_to_pose configure");
+  RCLCPP_INFO(logger_, "-------------------------------");
   return true;
 }
 
@@ -82,7 +82,7 @@ NavigateToPoseNavigator::getDefaultBTFilepath(
 bool
 NavigateToPoseNavigator::cleanup()
 {
-  goal_sub_.reset();
+  plan_sub_.reset();
   self_client_.reset();
   return true;
 }
@@ -92,12 +92,38 @@ NavigateToPoseNavigator::goalReceived(ActionT::Goal::ConstSharedPtr goal)
 {
   auto bt_xml_filename = goal->behavior_tree;
 
+   RCLCPP_INFO(logger_, "goalReceived");
+
+  // We want to shut down any goal from now on to avoid goal setup 
+  plan_sub_.reset();
+
   if (!bt_action_server_->loadBehaviorTree(bt_xml_filename)) {
     RCLCPP_ERROR(
       logger_, "BT file not found: %s. Navigation canceled.",
       bt_xml_filename.c_str());
     return false;
   }
+
+#if 0
+  RCLCPP_INFO(logger_, "Loaded Behavior Tree:");
+  const BT::Tree& tree = bt_action_server_->getTree();
+  std::function<void(const BT::TreeNode*, int)> printTree;
+  printTree = [&](const BT::TreeNode* node, int depth)
+  {
+    if (!node) return;
+
+    std::string indent(depth * 2, ' ');
+    std::cout << indent << "- " << node->name() << " [" << BT::toStr(node->status()) << "]" << std::endl;
+
+    if (auto control_node = dynamic_cast<const BT::ControlNode*>(node)) {
+      for (unsigned i = 0; i < control_node->childrenCount(); i++) {
+        printTree(control_node->child(i), depth + 1);
+      }
+    }
+  };
+
+  printTree(tree.rootNode(), 0);
+#endif
 
   initializeGoalPose(goal);
 
@@ -229,10 +255,14 @@ NavigateToPoseNavigator::initializeGoalPose(ActionT::Goal::ConstSharedPtr goal)
 }
 
 void
-NavigateToPoseNavigator::onGoalPoseReceived(const geometry_msgs::msg::PoseStamped::SharedPtr pose)
+NavigateToPoseNavigator::onPlanReceived(
+    const nav_msgs::msg::Path::SharedPtr path)
 {
+  RCLCPP_INFO(logger_, "onPlanReceived");
+  
   ActionT::Goal goal;
-  goal.pose = *pose;
+  auto path_length = path->poses.size();
+  goal.pose = path->poses[path_length-1];
   self_client_->async_send_goal(goal);
 }
 

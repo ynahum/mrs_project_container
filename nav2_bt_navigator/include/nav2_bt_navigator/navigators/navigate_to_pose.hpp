@@ -62,11 +62,10 @@ public:
   bool cleanup() override;
 
   /**
-   * @brief A subscription and callback to handle the topic-based goal published
-   * from rviz
-   * @param pose Pose received via atopic
+   * @brief A subscription and callback to handle the topic-based path published
+   * @param path Planned path received via atopic
    */
-  void onGoalPoseReceived(const geometry_msgs::msg::PoseStamped::SharedPtr pose);
+  void onPlanReceived(const nav_msgs::msg::Path::SharedPtr path);
 
   /**
    * @brief Get action name for this navigator
@@ -121,7 +120,7 @@ protected:
 
   rclcpp::Time start_time_;
 
-  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_sub_;
+  rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr plan_sub_;
   rclcpp_action::Client<ActionT>::SharedPtr self_client_;
 
   std::string goal_blackboard_id_;

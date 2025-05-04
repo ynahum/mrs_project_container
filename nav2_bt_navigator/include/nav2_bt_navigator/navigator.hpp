@@ -248,6 +248,8 @@ protected:
    */
   bool onGoalReceived(typename ActionT::Goal::ConstSharedPtr goal)
   {
+    RCLCPP_INFO(logger_, "onGoalRecevied");
+
     if (plugin_muxer_->isNavigating()) {
       RCLCPP_ERROR(
         logger_,
@@ -255,6 +257,7 @@ protected:
         " rejecting request.", getName().c_str());
       return false;
     }
+
 
     bool goal_accepted = goalReceived(goal);
 
