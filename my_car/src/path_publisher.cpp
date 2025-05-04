@@ -16,7 +16,7 @@ public:
         tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
         tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-        path_pub_ = this->create_publisher<nav_msgs::msg::Path>("/plan", 10);
+        path_pub_ = this->create_publisher<nav_msgs::msg::Path>("plan", 10);
         timer_ = this->create_wall_timer(std::chrono::seconds(1), std::bind(&PathPublisherNode::timerCallback, this));
 
         loadPathFromCSV(csv_path);
@@ -85,6 +85,7 @@ private:
             size_t idx = (start_idx + i) % path_points_.size();
             path_msg.poses.push_back(path_points_[idx]);
         }
+        // RCLCPP_INFO(this->get_logger(), "publish path");
         path_pub_->publish(path_msg);
     }
 
