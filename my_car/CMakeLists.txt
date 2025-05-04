@@ -74,7 +74,7 @@ ament_target_dependencies(wall_follow_node rclcpp geometry_msgs sensor_msgs std_
 install(TARGETS wall_follow_node DESTINATION lib/${PROJECT_NAME})
 
 
-set(lib_name nav2_update_plan_from_topic_bt_node)
+set(lib_name my_nav2_update_plan_from_topic_bt_node)
 set(lib_deps rclcpp nav_msgs geometry_msgs pluginlib behaviortree_cpp_v3)
 
 add_library(${lib_name} SHARED src/update_plan_from_topic.cpp)

@@ -4,7 +4,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 
-namespace nav2_behavior_tree
+namespace my_nav2_behavior_tree
 {
 
 class UpdatePlanFromTopic : public BT::ActionNodeBase
@@ -17,7 +17,7 @@ public:
     node_ = rclcpp::Node::make_shared("update_plan_from_topic_bt_node");
     // RCLCPP_INFO(node_->get_logger(), "[UpdatePlanFromTopic] Constructor run!");
     path_sub_ = node_->create_subscription<nav_msgs::msg::Path>(
-      "/plan", rclcpp::QoS(1).durability_volatile().reliable(),
+      "plan", rclcpp::QoS(1).durability_volatile().reliable(),
       [this](const nav_msgs::msg::Path::SharedPtr msg) {
         latest_path_ = *msg;
         path_available_ = true;
@@ -68,5 +68,5 @@ private:
 #include <behaviortree_cpp_v3/bt_factory.h>
 BT_REGISTER_NODES(factory)
 {
-  factory.registerNodeType<nav2_behavior_tree::UpdatePlanFromTopic>("UpdatePlanFromTopic");
+  factory.registerNodeType<my_nav2_behavior_tree::UpdatePlanFromTopic>("UpdatePlanFromTopic");
 }
