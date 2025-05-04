@@ -90,4 +90,21 @@ endif()
 ament_export_include_directories(include)
 ament_export_libraries(${library_name})
 ament_export_dependencies(${dependencies})
+
+set(lib_name my_nav2_update_plan_from_topic_bt_node)
+set(lib_deps rclcpp nav_msgs geometry_msgs pluginlib behaviortree_cpp_v3)
+
+add_library(${lib_name} SHARED src/update_plan_from_topic.cpp)
+ament_target_dependencies(${lib_name} ${lib_deps})
+pluginlib_export_plugin_description_file(
+    behaviortree_cpp_v3 behavior_trees_plugins/bt_plugin.xml)
+target_compile_definitions(${lib_name} PRIVATE BT_PLUGIN_EXPORT)
+install(TARGETS ${lib_name}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
+install(FILES behavior_trees_plugins/bt_plugin.xml DESTINATION share/${PROJECT_NAME})
+ament_export_libraries(${lib_name})
+ament_export_dependencies(${lib_deps})
+
 ament_package()
