@@ -51,6 +51,10 @@ NavigateToPoseNavigator::configure(
     "goal_pose",
     rclcpp::SystemDefaultsQoS(),
     std::bind(&NavigateToPoseNavigator::onGoalPoseReceived, this, std::placeholders::_1));
+
+  RCLCPP_INFO(logger_, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  RCLCPP_INFO(logger_, "My configure (navigate_to_pose)");
+  RCLCPP_INFO(logger_, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
   return true;
 }
 
