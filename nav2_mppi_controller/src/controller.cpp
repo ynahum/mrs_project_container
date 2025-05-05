@@ -48,7 +48,9 @@ void MPPIController::configure(
     parent_, name_,
     costmap_ros_->getGlobalFrameID(), parameters_handler_.get());
 
-  RCLCPP_INFO(logger_, "Configured MPPI Controller: %s", name_.c_str());
+  RCLCPP_INFO(logger_, "----------------------------------");
+  RCLCPP_INFO(logger_, "Configured My MPPI Controller: %s", name_.c_str());
+  RCLCPP_INFO(logger_, "----------------------------------");
 }
 
 void MPPIController::cleanup()
