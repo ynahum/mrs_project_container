@@ -65,7 +65,8 @@ if(COMPILER_SUPPORTS_FMA)
 endif()
 
 # If building one the same hardware to be deployed on, try `-march=native`!
-add_compile_options(-O3 -finline-limit=10000000 -ffp-contract=fast -ffast-math -mtune=generic)
+#add_compile_options(-O3 -finline-limit=10000000 -ffp-contract=fast -ffast-math -mtune=generic)
+add_compile_options(-O2)
 
 add_library(mppi_controller SHARED
   src/controller.cpp
@@ -92,20 +93,21 @@ add_library(mppi_critics SHARED
   src/critics/velocity_deadband_critic.cpp
 )
 
-set(libraries mppi_controller mppi_critics)
+#set(libraries mppi_controller mppi_critics)
+set(libraries mppi_critics)
 
 foreach(lib IN LISTS libraries)
   target_compile_options(${lib} PUBLIC -fconcepts)
   target_include_directories(${lib} PUBLIC ${xsimd_INCLUDE_DIRS})  #  ${OpenMP_INCLUDE_DIRS}
   target_link_libraries(${lib} xtensor xtensor::optimize xtensor::use_xsimd)
   ament_target_dependencies(${lib} ${dependencies_pkgs})
+  install(TARGETS ${lib}
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+  )
 endforeach()
 
-install(TARGETS mppi_controller mppi_critics
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-)
 
 install(DIRECTORY include/
   DESTINATION include/
