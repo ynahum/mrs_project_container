@@ -7,6 +7,8 @@ cd /home/dev/ros_ws/
 colcon build --packages-select my_car
 colcon build --packages-select nav2_bt_navigator
 colcon build --packages-select nav2_mppi_controller
+#--parallel-workers 1 --executor sequential 
+#--event-handlers console_direct+ --cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON
 #colcon build --packages-select nav2_mppi_controller --executor sequential  --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 cd - > /dev/null
