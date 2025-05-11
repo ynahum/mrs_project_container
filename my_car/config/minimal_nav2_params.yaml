@@ -31,25 +31,30 @@ controller_server:
     min_theta_velocity_threshold: 0.001
     failure_tolerance: 0.3
     progress_checker_plugin: "progress_checker"
-    goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
+    #goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
     controller_plugins: ["FollowPath"]
 
     # Progress checker parameters
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      # Extremely permissive settings (effectively disabled)
+      radius: 1000.0  # Enormous radius in meters
+      time_allowance: 100000.0  # ~28 hours in seconds
+      required_movement_radius: 0.0  # Set to zero - any movement counts as progress
+      movement_time_allowance: 600.0  # 10 minutes - extremely permissive
+    #  required_movement_radius: 0.5
+    #  movement_time_allowance: 10.0
     # Goal checker parameters
     #precise_goal_checker:
     #  plugin: "nav2_controller::SimpleGoalChecker"
     #  xy_goal_tolerance: 0.25
     #  yaw_goal_tolerance: 0.25
     #  stateful: True
-    general_goal_checker:
-      stateful: True
-      plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25
+    #general_goal_checker:
+    #  stateful: True
+    #  plugin: "nav2_controller::SimpleGoalChecker"
+    #  xy_goal_tolerance: 0.25
+    #  yaw_goal_tolerance: 0.25
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
       enable_debug_prints: false
@@ -151,17 +156,18 @@ controller_server:
 local_costmap:
   local_costmap:
     ros__parameters:
-      update_frequency: 5.0
-      publish_frequency: 2.0
-      global_frame: map
+      update_frequency: 10.0
+      publish_frequency: 5.0
+      global_frame: f1tenth_1
       robot_base_frame: f1tenth_1
       use_sim_time: True
-      rolling_window: true
-      width: 2  # was 3, smaller costmap due to speed or even 1.5
+      rolling_window: True
+      width: 7  # was 3, smaller costmap due to speed or even 1.5
       height: 2 # was 3, smaller costmap due to speed or even 1.5
       resolution: 0.1 # was 0.05, we reduce resolution for higher update
       robot_radius: 0.284 # length=0.5 width=0.27 => radius=0.284
       #footprint: [[0.135, 0.0], [0.0, 0.25], [-0.135, 0.0], [0.0, -0.25]]  # Approximation of circle      plugins: ["obstacle_layer", "inflation_layer"] # ["voxel_layer", "inflation_layer"]
+      #plugins: ["obstacle_layer", "inflation_layer", "static_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 5.0 # was 3.0  for race we want it sharper

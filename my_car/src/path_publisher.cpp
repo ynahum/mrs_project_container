@@ -44,7 +44,7 @@ private:
         RCLCPP_INFO(this->get_logger(), "Loaded %lu path points", path_points_.size());
     }
 
-    geometry_msgs::msg::PoseStamped getCurrentPose() {
+    std::optional<geometry_msgs::msg::PoseStamped> getCurrentPose() {
         geometry_msgs::msg::PoseStamped pose;
         try {
             auto transform = tf_buffer_->lookupTransform(frame_id_, base_frame_, tf2::TimePointZero);
@@ -54,6 +54,7 @@ private:
             pose.pose.orientation = transform.transform.rotation;
         } catch (const tf2::TransformException &ex) {
             RCLCPP_WARN(this->get_logger(), "TF lookup failed: %s", ex.what());
+            return std::nullopt;
         }
         return pose;
     }
@@ -74,7 +75,11 @@ private:
     }
 
     void timerCallback() {
-        auto pose = getCurrentPose();
+        std::optional<geometry_msgs::msg::PoseStamped> opt_pose =
+            getCurrentPose();
+        if (opt_pose == std::nullopt)
+            return;
+        auto pose = opt_pose.value();
         size_t start_idx = findClosestIndex(pose);
 
         nav_msgs::msg::Path path_msg;
