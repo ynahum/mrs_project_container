@@ -107,6 +107,7 @@ protected:
   size_t time_step_{0};
 
   rclcpp::Logger logger_{rclcpp::get_logger("MPPIController")};
+  bool enable_debug_prints_{false};
 };
 
 }  // namespace mppi

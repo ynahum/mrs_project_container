@@ -43,6 +43,13 @@ void PathHandler::initialize(
     getParam(inversion_yaw_tolerance, "inversion_yaw_tolerance", 0.4);
     inversion_locale_ = 0u;
   }
+  getParam(enable_debug_prints_, "enable_debug_prints", false);
+
+  RCLCPP_INFO(logger_, "enable_debug_prints_ %d", enable_debug_prints_);
+  if (enable_debug_prints_) {
+      RCLCPP_INFO(logger_, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  }
+
 }
 
 std::pair<nav_msgs::msg::Path, PathIterator>

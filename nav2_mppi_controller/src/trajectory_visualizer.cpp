@@ -34,7 +34,10 @@ void TrajectoryVisualizer::on_configure(
 
   getParam(trajectory_step_, "trajectory_step", 5);
   getParam(time_step_, "time_step", 3);
+  getParam(enable_debug_prints_, "enable_debug_prints", false);
 
+  RCLCPP_INFO(logger_, "TrajectoryVisualizer enable_debug_prints %d", enable_debug_prints_);
+    
   reset();
 }
 
@@ -93,12 +96,13 @@ void TrajectoryVisualizer::add(
   for (size_t i = 0; i < shape[0]; i += trajectory_step_) {
     for (size_t j = 0; j < shape[1]; j += time_step_) {
       const float j_flt = static_cast<float>(j);
-      float blue_component = 1.0f - j_flt / shape_1;
-      float green_component = j_flt / shape_1;
+      float red_component = 1.0f;
+      float green_component = 1.0f - (j_flt / (2 * shape_1));
+      float blue_component = 1.0f;
 
       auto pose = utils::createPose(trajectories.x(i, j), trajectories.y(i, j), 0.03);
       auto scale = utils::createScale(0.03, 0.03, 0.03);
-      auto color = utils::createColor(0, green_component, blue_component, 1);
+      auto color = utils::createColor(red_component, green_component, blue_component, 1);
       auto marker = utils::createMarker(
         marker_id_++, pose, scale, color, frame_id_, marker_namespace);
 

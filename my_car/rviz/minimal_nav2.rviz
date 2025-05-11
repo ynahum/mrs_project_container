@@ -8,13 +8,10 @@ Panels:
         - /RobotModel1/Description Topic1
         - /TF1/Frames1
         - /TF1/Tree1
-        - /LaserScan1
         - /Controller1
-        - /Path1
-        - /Path2
-        - /MarkerArray2
-        - /MarkerArray2/Status1
-        - /MarkerArray2/Topic1
+        - /MarkerArray1/Status1
+        - /MarkerArray1/Topic1
+        - /MarkerArray1/Namespaces1
       Splitter Ratio: 0.5833333134651184
     Tree Height: 553
   - Class: rviz_common/Selection
@@ -307,18 +304,6 @@ Visualization Manager:
           Value: false
       Enabled: true
       Name: Controller
-    - Class: rviz_default_plugins/MarkerArray
-      Enabled: true
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /waypoints
-      Value: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz_default_plugins/Path
@@ -350,7 +335,7 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz_default_plugins/Path
-      Color: 0; 170; 0
+      Color: 0; 0; 255
       Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
@@ -379,7 +364,8 @@ Visualization Manager:
       Enabled: true
       Name: MarkerArray
       Namespaces:
-        {}
+        Candidate Trajectories: true
+        Optimal Trajectory: true
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -456,5 +442,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1908
-  X: 1888
-  Y: 83
+  X: 1958
+  Y: 49
