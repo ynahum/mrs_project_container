@@ -3,6 +3,7 @@
 # Find the process running run.sh (excluding the grep itself)
 PROCESS=$(ps -eo pid,pgid,cmd | grep './[r]un.sh')
 
+
 if [ -n "$PROCESS" ]; then
   echo "Found run.sh process:"
   echo "$PROCESS"
