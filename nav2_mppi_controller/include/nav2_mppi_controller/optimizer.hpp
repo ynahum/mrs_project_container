@@ -40,6 +40,7 @@
 #include "nav2_mppi_controller/tools/noise_generator.hpp"
 #include "nav2_mppi_controller/tools/parameters_handler.hpp"
 #include "nav2_mppi_controller/tools/utils.hpp"
+#include "nav2_mppi_controller/mppi_debug_logger.hpp"
 
 namespace mppi
 {
@@ -260,6 +261,8 @@ protected:
     std::nullopt, std::nullopt};  /// Caution, keep references
 
   rclcpp::Logger logger_{rclcpp::get_logger("MPPIController")};
+  bool enable_debug_prints_{false};
+  DebugLogger debug_logger_{"optimizer.log"};
 };
 
 }  // namespace mppi

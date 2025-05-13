@@ -45,11 +45,6 @@ void PathHandler::initialize(
   }
   getParam(enable_debug_prints_, "enable_debug_prints", false);
 
-  RCLCPP_INFO(logger_, "enable_debug_prints_ %d", enable_debug_prints_);
-  if (enable_debug_prints_) {
-      RCLCPP_INFO(logger_, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  }
-
 }
 
 std::pair<nav_msgs::msg::Path, PathIterator>

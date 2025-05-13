@@ -34,10 +34,7 @@ void TrajectoryVisualizer::on_configure(
 
   getParam(trajectory_step_, "trajectory_step", 5);
   getParam(time_step_, "time_step", 3);
-  getParam(enable_debug_prints_, "enable_debug_prints", false);
 
-  RCLCPP_INFO(logger_, "TrajectoryVisualizer enable_debug_prints %d", enable_debug_prints_);
-    
   reset();
 }
 

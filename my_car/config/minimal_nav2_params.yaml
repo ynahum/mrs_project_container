@@ -67,7 +67,7 @@ controller_server:
       vx_max: 22.5 # real according to spec 22.88 m/s
       vx_min: -0.35
       vy_max: 2.5
-      wz_max: 1.9
+      wz_max: 40.77 # max_wz = (max_vx=22.88 / WheelBase=0.324) * tan(delta_max=0.5236)
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.1
@@ -78,9 +78,8 @@ controller_server:
       TrajectoryVisualizer:
         trajectory_step: 15
         time_step: 5
-        enable_debug_prints: true
       AckermannConstraints:
-        min_turning_r: 0.2
+        min_turning_r: 0.2 # 0.561 Rmin = WheelBase=0.324/tan(delta_max=0.5236) for some reason not enough
       critics: ["ConstraintCritic", "CostCritic", "PathAlignCritic", "PathFollowCritic", "PathAngleCritic", "PreferForwardCritic"]
       ConstraintCritic:
         enabled: true

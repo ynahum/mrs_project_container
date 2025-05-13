@@ -82,6 +82,7 @@ void Optimizer::getParams()
   getParam(s.retry_attempt_limit, "retry_attempt_limit", 1);
 
   getParam(motion_model_name, "motion_model", std::string("DiffDrive"));
+  getParam(enable_debug_prints_, "enable_debug_prints", false);
 
   s.constraints = s.base_constraints;
   setMotionModel(motion_model_name);
@@ -149,6 +150,11 @@ geometry_msgs::msg::TwistStamped Optimizer::evalControl(
 
   if (settings_.shift_control_sequence) {
     shiftControlSequence();
+  }
+  if (enable_debug_prints_) {
+    debug_logger_.write("evalControl");
+    debug_logger_.write("evalControl control.twist.linear.x=", control.twist.linear.x);
+    debug_logger_.write("evalControl control.twist.angular.z=", control.twist.angular.z);
   }
 
   return control;
@@ -411,6 +417,9 @@ geometry_msgs::msg::TwistStamped Optimizer::getControlFromSequenceAsTwist(
 
 void Optimizer::setMotionModel(const std::string & model)
 {
+  if (enable_debug_prints_) {
+    debug_logger_.write("setMotionModel ", model);
+  }
   if (model == "DiffDrive") {
     motion_model_ = std::make_shared<DiffDriveMotionModel>();
   } else if (model == "Omni") {
@@ -427,6 +436,9 @@ void Optimizer::setMotionModel(const std::string & model)
 
 void Optimizer::setSpeedLimit(double speed_limit, bool percentage)
 {
+  if (enable_debug_prints_) {
+    debug_logger_.write("setSpeedLimit speed_limit=", speed_limit, ", percentage=", percentage);
+  }
   auto & s = settings_;
   if (speed_limit == nav2_costmap_2d::NO_SPEED_LIMIT) {
     s.constraints.vx_max = s.base_constraints.vx_max;
