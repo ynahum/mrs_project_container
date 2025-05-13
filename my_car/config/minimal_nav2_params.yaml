@@ -58,13 +58,13 @@ controller_server:
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
       enable_debug_prints: false
-      time_steps: 56
+      time_steps: 76
       model_dt: 0.05
       batch_size: 2000
-      vx_std: 0.2
+      vx_std: 0.4
       vy_std: 0.2
       wz_std: 0.4
-      vx_max: 0.5
+      vx_max: 22.5 # real according to spec 22.88 m/s
       vx_min: -0.35
       vy_max: 2.5
       wz_max: 1.9
@@ -73,24 +73,24 @@ controller_server:
       transform_tolerance: 0.1
       temperature: 0.3
       gamma: 0.015
-      motion_model: "DiffDrive"
+      motion_model: "Ackermann"
       visualize: true
       TrajectoryVisualizer:
-        trajectory_step: 10
+        trajectory_step: 15
         time_step: 5
         enable_debug_prints: true
       AckermannConstraints:
         min_turning_r: 0.2
-      critics: ["ConstraintCritic", "CostCritic", "GoalCritic", "PathAlignCritic", "PathFollowCritic", "PathAngleCritic", "PreferForwardCritic"]
+      critics: ["ConstraintCritic", "CostCritic", "PathAlignCritic", "PathFollowCritic", "PathAngleCritic", "PreferForwardCritic"]
       ConstraintCritic:
         enabled: true
         cost_power: 1
         cost_weight: 4.0
-      GoalCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 5.0
-        threshold_to_consider: 1.4
+      # GoalCritic:
+      #   enabled: true
+      #   cost_power: 1
+      #   cost_weight: 5.0
+      #   threshold_to_consider: 1.4
       # GoalAngleCritic:
       #   enabled: true
       #   cost_power: 1
@@ -98,9 +98,9 @@ controller_server:
       #   threshold_to_consider: 0.5
       PreferForwardCritic:
         enabled: true
-        cost_power: 1
-        cost_weight: 5.0
-        threshold_to_consider: 0.5
+        cost_power: 2
+        cost_weight: 8.0
+        threshold_to_consider: 0.0
       # Option to replace Cost and use Obstacles instead
       # ObstaclesCritic:
       #   enabled: true
@@ -162,8 +162,8 @@ local_costmap:
       robot_base_frame: f1tenth_1
       use_sim_time: True
       rolling_window: True
-      width: 7  # was 3, smaller costmap due to speed or even 1.5
-      height: 2 # was 3, smaller costmap due to speed or even 1.5
+      width: 8  # was 3, smaller costmap due to speed or even 1.5
+      height: 3 # was 3, smaller costmap due to speed or even 1.5
       resolution: 0.1 # was 0.05, we reduce resolution for higher update
       robot_radius: 0.284 # length=0.5 width=0.27 => radius=0.284
       #footprint: [[0.135, 0.0], [0.0, 0.25], [-0.135, 0.0], [0.0, -0.25]]  # Approximation of circle      plugins: ["obstacle_layer", "inflation_layer"] # ["voxel_layer", "inflation_layer"]
