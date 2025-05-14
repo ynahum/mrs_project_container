@@ -23,7 +23,7 @@ public:
    * @brief Construct a logger and open the file
    * @param filename The filename to write to (e.g., "mppi_debug.log")
    */
-  explicit DebugLogger(const std::string & filename = "mppi_debug.log");
+  explicit DebugLogger(const std::string & filename);
 
   /**
    * @brief Clean up and close the log file

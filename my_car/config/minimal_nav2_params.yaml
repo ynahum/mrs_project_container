@@ -57,7 +57,9 @@ controller_server:
     #  yaw_goal_tolerance: 0.25
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
-      enable_debug_prints: false
+      enable_controller_prints: false
+      enable_optimizer_prints: false
+      enable_path_handler_prints: false
       time_steps: 76
       model_dt: 0.05
       batch_size: 2000

@@ -31,6 +31,7 @@
 #include "nav2_util/geometry_utils.hpp"
 
 #include "nav2_mppi_controller/tools/parameters_handler.hpp"
+#include "nav2_mppi_controller/mppi_debug_logger.hpp"
 
 namespace mppi
 {
@@ -162,6 +163,7 @@ protected:
   bool enforce_path_inversion_{false};
   unsigned int inversion_locale_{0u};
   bool enable_debug_prints_{false};
+  std::shared_ptr<DebugLogger> debug_logger_;
 
 };
 }  // namespace mppi

@@ -5,6 +5,7 @@
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include <iostream>
 
 namespace mppi
 {
@@ -22,10 +23,11 @@ DebugLogger::DebugLogger(const std::string & filename)
   }
 
   base_dir += "/latest_build";
+  //std::cout << "base_dir= "<< base_dir << std::endl;
   std::filesystem::create_directories(base_dir);
 
   log_file_path_ = base_dir + "/" + filename;
-  file_stream_.open(log_file_path_, std::ios::app);
+  file_stream_.open(log_file_path_);
 }
 
 DebugLogger::~DebugLogger()

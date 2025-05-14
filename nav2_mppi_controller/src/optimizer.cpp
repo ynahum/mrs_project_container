@@ -48,6 +48,10 @@ void Optimizer::initialize(
 
   getParams();
 
+  if (enable_debug_prints_) {
+    debug_logger_ = std::make_shared<DebugLogger>("optimizer.log");
+  }
+
   critic_manager_.on_configure(parent_, name_, costmap_ros_, parameters_handler_);
   noise_generator_.initialize(settings_, isHolonomic(), name_, parameters_handler_);
 
@@ -82,7 +86,7 @@ void Optimizer::getParams()
   getParam(s.retry_attempt_limit, "retry_attempt_limit", 1);
 
   getParam(motion_model_name, "motion_model", std::string("DiffDrive"));
-  getParam(enable_debug_prints_, "enable_debug_prints", false);
+  getParam(enable_debug_prints_, "enable_optimizer_prints", false);
 
   s.constraints = s.base_constraints;
   setMotionModel(motion_model_name);
@@ -139,6 +143,17 @@ geometry_msgs::msg::TwistStamped Optimizer::evalControl(
   const geometry_msgs::msg::Pose & goal,
   nav2_core::GoalChecker * goal_checker)
 {
+  if (nullptr != debug_logger_) {
+    debug_logger_->write("robot_speed linear x=", robot_speed.linear.x);
+    debug_logger_->write("goal_checker=", goal_checker);
+    auto plan_size = plan.poses.size();
+    debug_logger_->write("robot_speed plan size=", plan_size);
+    debug_logger_->write("robot_speed plan start position x=", plan.poses[0].pose.position.x);
+    debug_logger_->write("robot_speed plan start position y=", plan.poses[0].pose.position.y);
+    debug_logger_->write("robot_speed plan last position x=", plan.poses[plan_size-1].pose.position.x);
+    debug_logger_->write("robot_speed plan last position y=", plan.poses[plan_size-1].pose.position.y);
+  }
+
   prepare(robot_pose, robot_speed, plan, goal, goal_checker);
 
   do {
@@ -151,10 +166,10 @@ geometry_msgs::msg::TwistStamped Optimizer::evalControl(
   if (settings_.shift_control_sequence) {
     shiftControlSequence();
   }
-  if (enable_debug_prints_) {
-    debug_logger_.write("evalControl");
-    debug_logger_.write("evalControl control.twist.linear.x=", control.twist.linear.x);
-    debug_logger_.write("evalControl control.twist.angular.z=", control.twist.angular.z);
+  if (nullptr != debug_logger_) {
+    debug_logger_->write("control.twist.linear.x=", control.twist.linear.x);
+    debug_logger_->write("control.twist.linear.x=", control.twist.linear.x);
+    debug_logger_->write("control.twist.angular.z=", control.twist.angular.z);
   }
 
   return control;
@@ -417,8 +432,8 @@ geometry_msgs::msg::TwistStamped Optimizer::getControlFromSequenceAsTwist(
 
 void Optimizer::setMotionModel(const std::string & model)
 {
-  if (enable_debug_prints_) {
-    debug_logger_.write("setMotionModel ", model);
+  if (nullptr != debug_logger_) {
+    debug_logger_->write("setMotionModel ", model);
   }
   if (model == "DiffDrive") {
     motion_model_ = std::make_shared<DiffDriveMotionModel>();
@@ -436,8 +451,8 @@ void Optimizer::setMotionModel(const std::string & model)
 
 void Optimizer::setSpeedLimit(double speed_limit, bool percentage)
 {
-  if (enable_debug_prints_) {
-    debug_logger_.write("setSpeedLimit speed_limit=", speed_limit, ", percentage=", percentage);
+  if (nullptr != debug_logger_) {
+    debug_logger_->write("setSpeedLimit speed_limit=", speed_limit, ", percentage=", percentage);
   }
   auto & s = settings_;
   if (speed_limit == nav2_costmap_2d::NO_SPEED_LIMIT) {

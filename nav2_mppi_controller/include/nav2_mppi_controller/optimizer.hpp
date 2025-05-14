@@ -262,7 +262,7 @@ protected:
 
   rclcpp::Logger logger_{rclcpp::get_logger("MPPIController")};
   bool enable_debug_prints_{false};
-  DebugLogger debug_logger_{"optimizer.log"};
+  std::shared_ptr<DebugLogger> debug_logger_;
 };
 
 }  // namespace mppi

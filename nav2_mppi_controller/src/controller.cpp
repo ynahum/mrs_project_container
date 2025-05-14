@@ -40,6 +40,12 @@ void MPPIController::configure(
   auto getParam = parameters_handler_->getParamGetter(name_);
   getParam(visualize_, "visualize", false);
   getParam(reset_period_, "reset_period", 1.0);
+  getParam(enable_debug_prints_, "enable_controller_prints", false);
+
+  if (enable_debug_prints_) {
+    debug_logger_ = std::make_shared<DebugLogger>("controller.log");
+  }
+
 
   // Configure composed objects
   optimizer_.initialize(parent_, name_, costmap_ros_, parameters_handler_.get());
@@ -126,6 +132,9 @@ void MPPIController::visualize(nav_msgs::msg::Path transformed_plan)
 
 void MPPIController::setPlan(const nav_msgs::msg::Path & path)
 {
+  if (nullptr != debug_logger_) {
+    debug_logger_->write("MPPIController::setPlan with size =", path.poses.size());
+  }
   path_handler_.setPath(path);
 }
 
