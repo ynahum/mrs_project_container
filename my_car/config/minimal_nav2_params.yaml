@@ -60,7 +60,7 @@ controller_server:
       enable_controller_prints: false
       enable_optimizer_prints: false
       enable_path_handler_prints: false
-      time_steps: 76
+      time_steps: 36
       model_dt: 0.05
       batch_size: 2000
       vx_std: 0.4
@@ -71,7 +71,7 @@ controller_server:
       vy_max: 2.5
       wz_max: 40.77 # max_wz = (max_vx=22.88 / WheelBase=0.324) * tan(delta_max=0.5236)
       iteration_count: 1
-      prune_distance: 1.7
+      prune_distance: 5.7
       transform_tolerance: 0.1
       temperature: 0.3
       gamma: 0.015
@@ -123,8 +123,8 @@ controller_server:
         trajectory_point_step: 2
       PathAlignCritic:
         enabled: true
-        cost_power: 1
-        cost_weight: 14.0
+        cost_power: 2
+        cost_weight: 20.0
         max_path_occupancy_ratio: 0.05
         trajectory_point_step: 4
         threshold_to_consider: 0.5

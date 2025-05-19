@@ -10,10 +10,13 @@
 class PathPublisherNode : public rclcpp::Node {
 public:
     PathPublisherNode() : Node("path_publisher_node") {
-        std::string csv_path = this->declare_parameter<std::string>("csv_path", "/home/dev/ros_ws/src/my_car/maps/practice_2_w_as_o_centerline.csv");
-        lookahead_ = this->declare_parameter<int>("lookahead", 300);
+        this->declare_parameter("csv_path", "/home/dev/ros_ws/src/my_car/maps/practice_2_w_as_o_centerline.csv");
+        std::string csv_path = this->get_parameter("csv_path").as_string();
 
-        tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+        this->declare_parameter<int>("lookahead", 150);
+        lookahead_ = this->get_parameter("lookahead").as_int();
+
+        tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
         tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
         path_pub_ = this->create_publisher<nav_msgs::msg::Path>("plan", 10);
@@ -24,6 +27,8 @@ public:
 
 private:
     void loadPathFromCSV(const std::string &file_path) {
+        RCLCPP_INFO(this->get_logger(), "loadPathFromCSV %s", file_path.c_str());
+
         std::ifstream file(file_path);
         std::string line;
         // to ignore the first line: x,y
@@ -103,7 +108,7 @@ private:
 
     std::string frame_id_ = "map";
     std::string base_frame_ = "f1tenth_1";
-    int lookahead_ = 300;
+    int lookahead_ = 150;
 };
 
 int main(int argc, char **argv) {

@@ -15,7 +15,8 @@
         <param name="kP_steering" value="1.2"/>
     </node>
 
-    <node pkg="my_car" exec="path_publisher" name="path_publisher_node" output="screen" />
-
+    <node pkg="my_car" exec="path_publisher" name="path_publisher_node" output="screen" >
+        <param name="csv_path" value="/home/dev/ros_ws/src/my_car/maps/practice_2_w_as_o_centerline_manual.csv"/>
+    </node>
 </launch>
 
