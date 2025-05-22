@@ -45,7 +45,7 @@ void PathHandler::initialize(
   }
   getParam(enable_debug_prints_, "enable_path_handler_prints", false);
   if (enable_debug_prints_) {
-    debug_logger_ = std::make_shared<DebugLogger>("path_handler.log");
+    debug_logger_ = std::make_shared<DebugLogger>("path_handler");
     debug_logger_->write("start path handler debug prints");
   }
 

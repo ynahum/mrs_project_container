@@ -30,7 +30,7 @@ public:
 
 
         if (enable_debug_prints_) {
-            debug_logger_ = std::make_shared<DebugLogger>("vel_controller.log");
+            debug_logger_ = std::make_shared<DebugLogger>("vel_controller");
         }
 
         // Subscribers

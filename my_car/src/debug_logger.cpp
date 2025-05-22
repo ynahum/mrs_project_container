@@ -19,11 +19,19 @@ DebugLogger::DebugLogger(const std::string & filename)
     base_dir = std::string(home ? home : ".") + "/.ros/log";
   }
 
+  auto now = std::chrono::system_clock::now();
+  std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+
+  std::stringstream ss;
+  ss << filename << "_"
+    << std::put_time(std::localtime(&now_c), "%Y%m%d_%H%M%S")
+    << ".log";
+
   base_dir += "/latest_build";
   //std::cout << "base_dir= "<< base_dir << std::endl;
   std::filesystem::create_directories(base_dir);
 
-  log_file_path_ = base_dir + "/" + filename;
+  log_file_path_ = base_dir + "/" + ss.str();
   file_stream_.open(log_file_path_);
 }
 

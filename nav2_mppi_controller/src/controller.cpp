@@ -43,7 +43,7 @@ void MPPIController::configure(
   getParam(enable_debug_prints_, "enable_controller_prints", false);
 
   if (enable_debug_prints_) {
-    debug_logger_ = std::make_shared<DebugLogger>("controller.log");
+    debug_logger_ = std::make_shared<DebugLogger>("mppi_controller");
   }
 
 

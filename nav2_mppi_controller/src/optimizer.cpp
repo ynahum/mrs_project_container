@@ -50,7 +50,7 @@ void Optimizer::initialize(
 
   if (enable_debug_prints_) {
     RCLCPP_INFO(logger_, "optimizer enable_debug_prints ");
-    debug_logger_ = std::make_shared<DebugLogger>("optimizer.log");
+    debug_logger_ = std::make_shared<DebugLogger>("optimizer");
     debug_logger_->write("start optimizer log");
   }
 
