@@ -12,12 +12,12 @@
 
     <node pkg="my_car" exec="velocity_control_node" name="velocity_control_node" output="screen">
         <param name="kP_throttle" value="0.04"/>
-        <param name="kP_steering" value="0.8"/>
+        <param name="kP_steering" value="1.0"/>
     </node>
 
     <node pkg="my_car" exec="path_publisher" name="path_publisher_node" output="screen" >
         <param name="csv_path" value="/home/dev/ros_ws/src/my_car/maps/practice_2_w_as_o_centerline_manual.csv"/>
-        <param name="lookahead" value="150"/>
+        <param name="lookahead" value="175"/>
     </node>
 </launch>
 
