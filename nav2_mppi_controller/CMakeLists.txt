@@ -33,6 +33,7 @@ set(dependencies_pkgs
   tf2_geometry_msgs
   tf2_eigen
   tf2_ros
+  my_car
 )
 
 foreach(pkg IN LISTS dependencies_pkgs)
@@ -75,7 +76,6 @@ add_library(mppi_controller SHARED
   src/path_handler.cpp
   src/parameters_handler.cpp
   src/noise_generator.cpp
-  src/debug_logger.cpp
 )
 
 add_library(mppi_critics SHARED
@@ -98,7 +98,7 @@ set(libraries mppi_controller mppi_critics)
 foreach(lib IN LISTS libraries)
   target_compile_options(${lib} PUBLIC -fconcepts)
   target_include_directories(${lib} PUBLIC ${xsimd_INCLUDE_DIRS})  #  ${OpenMP_INCLUDE_DIRS}
-  target_link_libraries(${lib} xtensor xtensor::optimize xtensor::use_xsimd)
+  target_link_libraries(${lib} xtensor xtensor::optimize xtensor::use_xsimd my_car::debug_logger)
   ament_target_dependencies(${lib} ${dependencies_pkgs})
   install(TARGETS ${lib}
     ARCHIVE DESTINATION lib

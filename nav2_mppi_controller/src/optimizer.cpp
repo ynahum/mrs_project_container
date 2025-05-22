@@ -49,7 +49,9 @@ void Optimizer::initialize(
   getParams();
 
   if (enable_debug_prints_) {
+    RCLCPP_INFO(logger_, "optimizer enable_debug_prints ");
     debug_logger_ = std::make_shared<DebugLogger>("optimizer.log");
+    debug_logger_->write("start optimizer log");
   }
 
   critic_manager_.on_configure(parent_, name_, costmap_ros_, parameters_handler_);

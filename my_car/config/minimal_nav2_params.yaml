@@ -58,7 +58,7 @@ controller_server:
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
       enable_controller_prints: false
-      enable_optimizer_prints: false
+      enable_optimizer_prints: true
       enable_path_handler_prints: false
       time_steps: 36
       model_dt: 0.05

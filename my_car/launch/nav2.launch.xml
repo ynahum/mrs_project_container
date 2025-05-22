@@ -13,7 +13,7 @@
     <node pkg="my_car" exec="velocity_control_node" name="velocity_control_node" output="screen">
         <param name="kP_throttle" value="0.04"/>
         <param name="kP_steering" value="1.0"/>
-        <param name="enable_debug_prints" value="false"/>
+        <param name="enable_debug_prints" value="true"/>
     </node>
 
     <node pkg="my_car" exec="path_publisher" name="path_publisher_node" output="screen" >

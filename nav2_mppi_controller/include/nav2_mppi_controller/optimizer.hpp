@@ -40,7 +40,7 @@
 #include "nav2_mppi_controller/tools/noise_generator.hpp"
 #include "nav2_mppi_controller/tools/parameters_handler.hpp"
 #include "nav2_mppi_controller/tools/utils.hpp"
-#include "nav2_mppi_controller/debug_logger.hpp"
+#include "my_car/debug_logger.hpp"
 
 namespace mppi
 {

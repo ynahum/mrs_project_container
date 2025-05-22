@@ -27,12 +27,6 @@ public:
    */
   ~DebugLogger();
 
-  /**
-   * @brief Write a string to the debug log file
-   * @param message The message to write
-   */
-  void write(const std::string & message);
-
   template<typename... Args>
   void write(Args&&... args)
   {
@@ -40,9 +34,9 @@ public:
       return;
     }
 
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-    file_stream_ << "[" << std::put_time(std::localtime(&now_time), "%F %T") << "] ";
+    using namespace std::chrono;
+    auto now = system_clock::now().time_since_epoch();
+    file_stream_ << "[" << std::fixed << std::setprecision(9) << duration<double>(now).count() << "] ";
     (file_stream_ << ... << std::forward<Args>(args)) << std::endl;
   }
 

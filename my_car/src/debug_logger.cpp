@@ -34,15 +34,3 @@ DebugLogger::~DebugLogger()
   }
 }
 
-void DebugLogger::write(const std::string & message)
-{
-  if (!file_stream_.is_open()) {
-    return;
-  }
-
-  // Optional: Add timestamp prefix
-  auto now = std::chrono::system_clock::now();
-  std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-  file_stream_ << "[" << std::put_time(std::localtime(&now_time), "%F %T") << "] ";
-  file_stream_ << message << std::endl;
-}

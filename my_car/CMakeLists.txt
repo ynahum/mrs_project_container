@@ -45,6 +45,42 @@ include_directories(
   include
 )
 
+add_library(debug_logger
+  src/debug_logger.cpp
+)
+
+target_include_directories(debug_logger PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+ament_target_dependencies(debug_logger rclcpp)
+
+ament_export_include_directories(include)
+ament_export_libraries(debug_logger)
+ament_export_dependencies(rclcpp)
+
+# Install the target
+install(TARGETS debug_logger
+  EXPORT export_debug_logger
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+# Export the target
+install(EXPORT export_debug_logger
+  NAMESPACE my_car::
+  DESTINATION share/my_car/cmake
+)
+
+ament_export_targets(export_debug_logger HAS_LIBRARY_TARGET)
+
+install(DIRECTORY include/
+  DESTINATION include
+)
+
+
 # Add executable for initial pose publisher
 add_executable(path_publisher src/path_publisher.cpp)
 ament_target_dependencies(path_publisher rclcpp geometry_msgs tf2 tf2_ros nav_msgs)
@@ -59,7 +95,8 @@ install(TARGETS odometry_node DESTINATION lib/${PROJECT_NAME})
 
 
   # Add executable for velocity control node
-add_executable(velocity_control_node src/velocity_control_node.cpp src/debug_logger.cpp)
+add_executable(velocity_control_node src/velocity_control_node.cpp)
+target_link_libraries(velocity_control_node debug_logger)
 ament_target_dependencies(velocity_control_node rclcpp geometry_msgs sensor_msgs std_msgs)
 install(TARGETS velocity_control_node DESTINATION lib/${PROJECT_NAME})
 
