@@ -75,7 +75,7 @@ add_library(mppi_controller SHARED
   src/path_handler.cpp
   src/parameters_handler.cpp
   src/noise_generator.cpp
-  src/mppi_debug_logger.cpp
+  src/debug_logger.cpp
 )
 
 add_library(mppi_critics SHARED

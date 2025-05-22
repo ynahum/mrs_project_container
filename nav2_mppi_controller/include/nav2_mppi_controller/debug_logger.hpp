@@ -1,5 +1,5 @@
-#ifndef MPPI_DEBUG_LOGGER_HPP_
-#define MPPI_DEBUG_LOGGER_HPP_
+#ifndef DEBUG_LOGGER_HPP_
+#define DEBUG_LOGGER_HPP_
 
 #include <string>
 #include <fstream>
@@ -9,9 +9,6 @@
 #include <iomanip>
 #include <filesystem>
 #include <utility>
-
-namespace mppi
-{
 
 /**
  * @brief Simple logger to write debug output to a ROS 2 log directory file
@@ -54,6 +51,5 @@ private:
   std::ofstream file_stream_;
 };
 
-}  // namespace mppi
 
-#endif  // MPPI_DEBUG_LOGGER_HPP_
+#endif  // DEBUG_LOGGER_HPP_

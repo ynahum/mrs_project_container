@@ -31,7 +31,7 @@
 #include "nav2_util/geometry_utils.hpp"
 
 #include "nav2_mppi_controller/tools/parameters_handler.hpp"
-#include "nav2_mppi_controller/mppi_debug_logger.hpp"
+#include "nav2_mppi_controller/debug_logger.hpp"
 
 namespace mppi
 {

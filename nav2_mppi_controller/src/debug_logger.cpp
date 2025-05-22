@@ -1,4 +1,4 @@
-#include "nav2_mppi_controller/mppi_debug_logger.hpp"
+#include "nav2_mppi_controller/debug_logger.hpp"
 
 #include <cstdlib>      // for getenv
 #include <filesystem>   // C++17
@@ -6,9 +6,6 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-
-namespace mppi
-{
 
 DebugLogger::DebugLogger(const std::string & filename)
 {
@@ -49,5 +46,3 @@ void DebugLogger::write(const std::string & message)
   file_stream_ << "[" << std::put_time(std::localtime(&now_time), "%F %T") << "] ";
   file_stream_ << message << std::endl;
 }
-
-}  // namespace mppi

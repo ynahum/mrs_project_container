@@ -143,19 +143,10 @@ geometry_msgs::msg::TwistStamped Optimizer::evalControl(
   const geometry_msgs::msg::Pose & goal,
   nav2_core::GoalChecker * goal_checker)
 {
-  if (nullptr != debug_logger_) {
-    debug_logger_->write("robot_speed linear x=", robot_speed.linear.x);
-    debug_logger_->write("goal_checker=", goal_checker);
-    auto plan_size = plan.poses.size();
-    debug_logger_->write("robot_speed plan size=", plan_size);
-    debug_logger_->write("robot_speed plan start position x=", plan.poses[0].pose.position.x);
-    debug_logger_->write("robot_speed plan start position y=", plan.poses[0].pose.position.y);
-    debug_logger_->write("robot_speed plan last position x=", plan.poses[plan_size-1].pose.position.x);
-    debug_logger_->write("robot_speed plan last position y=", plan.poses[plan_size-1].pose.position.y);
-  }
 
   prepare(robot_pose, robot_speed, plan, goal, goal_checker);
 
+  
   do {
     optimize();
   } while (fallback(critics_data_.fail_flag));
@@ -167,9 +158,14 @@ geometry_msgs::msg::TwistStamped Optimizer::evalControl(
     shiftControlSequence();
   }
   if (nullptr != debug_logger_) {
-    debug_logger_->write("control.twist.linear.x=", control.twist.linear.x);
-    debug_logger_->write("control.twist.linear.x=", control.twist.linear.x);
-    debug_logger_->write("control.twist.angular.z=", control.twist.angular.z);
+    auto& position = state_.pose.pose.position;
+    auto& v_linear = state_.speed.linear;
+    float wz = state_.speed.angular.z;
+    float yaw = tf2::getYaw(state_.pose.pose.orientation);
+    debug_logger_->write("CVx=%f, CVy=%f, CWz=%f",
+        control.twist.linear.x, control.twist.linear.y, control.twist.angular.z);
+    debug_logger_->write("X=%f, Y=%f, yaw=%f", position.x, position.y, yaw);
+    debug_logger_->write("Vx=%f, Vy=%f, Wz=%f", v_linear.x, v_linear.y, wz);
   }
 
   return control;
