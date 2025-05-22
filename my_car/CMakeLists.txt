@@ -41,6 +41,10 @@ foreach(PACKAGE
 endforeach()
 
 
+include_directories(
+  include
+)
+
 # Add executable for initial pose publisher
 add_executable(path_publisher src/path_publisher.cpp)
 ament_target_dependencies(path_publisher rclcpp geometry_msgs tf2 tf2_ros nav_msgs)
@@ -55,7 +59,7 @@ install(TARGETS odometry_node DESTINATION lib/${PROJECT_NAME})
 
 
   # Add executable for velocity control node
-add_executable(velocity_control_node src/velocity_control_node.cpp)
+add_executable(velocity_control_node src/velocity_control_node.cpp src/debug_logger.cpp)
 ament_target_dependencies(velocity_control_node rclcpp geometry_msgs sensor_msgs std_msgs)
 install(TARGETS velocity_control_node DESTINATION lib/${PROJECT_NAME})
 

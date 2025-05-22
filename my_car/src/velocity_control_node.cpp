@@ -1,3 +1,5 @@
+#include "my_car/debug_logger.hpp"
+
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "std_msgs/msg/float32.hpp"
@@ -9,15 +11,27 @@ public:
 
         // Declare parameters with default values
         declare_parameter("kP_throttle", 0.04);
-        declare_parameter("kP_steering", 0.5);
-
-        // Get parameter values
+        declare_parameter("kD_throttle", 0.04);
         kP_throttle_ = get_parameter("kP_throttle").as_double();
-        kP_steering_ = get_parameter("kP_steering").as_double();
-
-        // Print values to verify
+        kD_throttle_ = get_parameter("kD_throttle").as_double();
         RCLCPP_INFO(get_logger(), "kP_throttle_: %f", kP_throttle_);
+        RCLCPP_INFO(get_logger(), "kD_throttle_: %f", kD_throttle_);
+
+        declare_parameter("kP_steering", 0.5);
+        declare_parameter("kD_steering", 0.5);
+        kP_steering_ = get_parameter("kP_steering").as_double();
+        kD_steering_ = get_parameter("kD_steering").as_double();
         RCLCPP_INFO(get_logger(), "kP_steering_: %f", kP_steering_);
+        RCLCPP_INFO(get_logger(), "kD_steering_: %f", kD_steering_);
+
+        declare_parameter("enable_debug_prints", false);
+        enable_debug_prints_ = get_parameter("enable_debug_prints").as_bool();
+        RCLCPP_INFO(get_logger(), "enable_debug_prints_: %d", enable_debug_prints_);
+
+
+        if (enable_debug_prints_) {
+            debug_logger_ = std::make_shared<DebugLogger>("vel_controller.log");
+        }
 
         // Subscribers
         cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
@@ -65,9 +79,17 @@ private:
         double throttle_command = velocity_error * kP_throttle_;
         
         // Compute steering adjustment
-        double angular_error = desired_angular_velocity_ - current_angular_velocity_;
-        double steering_command = angular_error * kP_steering_;
-        
+        double angular_velocity_error = desired_angular_velocity_ - current_angular_velocity_;
+        double steering_command = angular_velocity_error * kP_steering_;
+
+        if (nullptr != debug_logger_) {
+            debug_logger_->write("dV=",desired_velocity_," ,V=",current_velocity,
+                " ,eV=", velocity_error);
+            debug_logger_->write("dW=",desired_angular_velocity_," ,W=",current_angular_velocity_,
+                " ,eW=", angular_velocity_error);
+            debug_logger_->write("th_cmd=",throttle_command, " ,st_cmd=", steering_command);
+        }
+
         // Publish throttle command
         auto throttle_msg = std_msgs::msg::Float32();
         throttle_msg.data = throttle_command;
@@ -98,7 +120,14 @@ private:
     
     // Proportional gains
     double kP_throttle_;
+    double kD_throttle_;
+
     double kP_steering_;
+    double kD_steering_;
+
+    bool enable_debug_prints_{false};
+    std::shared_ptr<DebugLogger> debug_logger_;
+
 };
 
 int main(int argc, char **argv) {

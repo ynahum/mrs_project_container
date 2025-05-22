@@ -162,10 +162,10 @@ geometry_msgs::msg::TwistStamped Optimizer::evalControl(
     auto& v_linear = state_.speed.linear;
     float wz = state_.speed.angular.z;
     float yaw = tf2::getYaw(state_.pose.pose.orientation);
-    debug_logger_->write("CVx=%f, CVy=%f, CWz=%f",
-        control.twist.linear.x, control.twist.linear.y, control.twist.angular.z);
-    debug_logger_->write("X=%f, Y=%f, yaw=%f", position.x, position.y, yaw);
-    debug_logger_->write("Vx=%f, Vy=%f, Wz=%f", v_linear.x, v_linear.y, wz);
+    debug_logger_->write("CVx=",control.twist.linear.x,",CVy=",
+        control.twist.linear.y, ",CWz=", control.twist.angular.z);
+    debug_logger_->write("X=",position.x, " ,Y=", position.y," ,yaw=", yaw);
+    debug_logger_->write("VX=",v_linear.x, " ,VY=", v_linear.y," ,Wz=", wz);
   }
 
   return control;
