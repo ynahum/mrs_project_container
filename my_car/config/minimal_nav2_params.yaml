@@ -71,7 +71,7 @@ controller_server:
       vy_max: 2.5
       wz_max: 40.77 # max_wz = (max_vx=22.88 / WheelBase=0.324) * tan(delta_max=0.5236)
       iteration_count: 1
-      prune_distance: 5.7
+      prune_distance: 10.7
       transform_tolerance: 0.1
       temperature: 0.3
       gamma: 0.015

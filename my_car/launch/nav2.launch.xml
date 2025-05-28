@@ -11,9 +11,13 @@
     </include>
 
     <node pkg="my_car" exec="velocity_control_node" name="velocity_control_node" output="screen">
-        <param name="kP_throttle" value="0.04"/>
-        <param name="kP_steering" value="1.0"/>
+        <param name="Kp_th" value="0.07"/>
+        <param name="Kd_th" value="0.01"/>
+        <param name="Ki_th" value="0.0"/>
+        <param name="Kp_st" value="1.0"/>
+        <param name="Kd_st" value="0.0"/>
         <param name="enable_debug_prints" value="true"/>
+        <param name="enable_debug_speed" value="true"/>
     </node>
 
     <node pkg="my_car" exec="path_publisher" name="path_publisher_node" output="screen" >
