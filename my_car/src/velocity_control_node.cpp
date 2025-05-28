@@ -179,6 +179,10 @@ private:
                             Ki_th_ * integral_vel_error_ +
                             Kd_th_ * derivative;
 
+        // anti windup
+        if (Ki_th_ > 0 && abs(throttle_command) >= 1.0)
+            integral_vel_error_ -= velocity_error * dt;  // cancel accumulation
+
         // Clamp throttle if needed
         throttle_command = std::clamp(throttle_command, -throttle_limit_, throttle_limit_);
 
