@@ -66,11 +66,11 @@ public:
 
         if (nullptr != debug_logger_) {
             debug_logger_->write("construct low level velocity controller done");
-            debug_logger_->write("Kp_th_=",Kp_th_);
-            debug_logger_->write("Kd_th_=",Kd_th_);
-            debug_logger_->write("Ki_th_=",Ki_th_);
-            debug_logger_->write("Kp_st_=",Kp_st_);
-            debug_logger_->write("Kd_st_=",Kd_st_);
+            if (Kp_th_ > 0) debug_logger_->write("Kp_th_=",Kp_th_);
+            if (Kd_th_ > 0) debug_logger_->write("Kd_th_=",Kd_th_);
+            if (Ki_th_ > 0) debug_logger_->write("Ki_th_=",Ki_th_);
+            if (Kp_st_ > 0) debug_logger_->write("Kp_st_=",Kp_st_);
+            if (Kd_st_ > 0) debug_logger_->write("Kd_st_=",Kd_st_);
         }
     }
 

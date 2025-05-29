@@ -26,6 +26,8 @@ ki_throttle = None
 kp_steering = None
 kd_steering = None
 
+out_post = ""
+
 with open(log_file, 'r') as f:
     for line in f:
         # Get timestamp
@@ -99,14 +101,19 @@ fig, axs = plt.subplots(4, 1, sharex=True, figsize=(12, 10))
 title = "Low-Level Controller Debug\n"
 if kp_throttle is not None:
     title += f"Kp_th = {kp_throttle:.3f} "
+    out_post += f"_Kp_th_{kp_throttle:.3f}"
 if kd_throttle is not None:
     title += f"Kd_th = {kd_throttle:.3f} "
+    out_post += f"_Kd_th_{kd_throttle:.3f}"
 if ki_throttle is not None:
     title += f"Ki_th = {ki_throttle:.3f}\n"
+    out_post += f"_Ki_th_{ki_throttle:.3f}"
 if kp_steering is not None:
     title += f"Kp_st = {kp_steering:.3f} "
+    out_post += f"_Kp_st_{kp_steering:.3f}"
 if kd_steering is not None:
     title += f"Kd_st = {kd_steering:.3f}"
+    out_post += f"_Kd_st_{kd_steering:.3f}"
 fig.suptitle(title.strip(), fontsize=14)
 
 # 1. Desired vs current velocity
@@ -145,5 +152,8 @@ axs[3].grid()
 plt.tight_layout(rect=[0, 0, 1, 0.95])
 #plt.show()
 
+out_post += f".png"
+
+output_file += out_post
 plt.savefig(output_file)
 print(f"Plot saved to {output_file}")
