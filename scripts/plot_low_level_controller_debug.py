@@ -3,11 +3,12 @@ import numpy as np
 import re
 import sys
 
-if len(sys.argv) < 2:
-    print("Usage: python3 plot_debug_log.py <log_file.txt>")
+if len(sys.argv) != 3:
+    print("Usage: python plot_throttle_steering.py <log_file.txt> <output_plot.png>")
     sys.exit(1)
 
 log_file = sys.argv[1]
+output_file = sys.argv[2]
 
 # Data storage
 timestamps = []
@@ -142,4 +143,7 @@ axs[3].legend()
 axs[3].grid()
 
 plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.show()
+#plt.show()
+
+plt.savefig(output_file)
+print(f"Plot saved to {output_file}")
