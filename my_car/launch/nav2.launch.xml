@@ -11,8 +11,8 @@
     </include>
 
     <node pkg="my_car" exec="velocity_control_node" name="velocity_control_node" output="screen">
-        <param name="Kp_th" value="0.045"/>
-        <param name="Kd_th" value="0.03"/>
+        <param name="Kp_th" value="0.037"/>
+        <param name="Kd_th" value="0.01"/>
         <param name="Ki_th" value="0.0"/>
         <param name="Kp_st" value="1.0"/>
         <param name="Kd_st" value="0.0"/>
