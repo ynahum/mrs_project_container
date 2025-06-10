@@ -21,7 +21,7 @@
     </node>
 
     <node pkg="my_car" exec="path_publisher" name="path_publisher_node" output="screen" >
-        <param name="csv_path" value="/home/dev/ros_ws/src/my_car/maps/practice_2_w_as_o_ref_center.csv"/>
+        <param name="csv_path" value="/home/dev/ros_ws/src/my_car/maps/traj_race_cl.csv"/>
         <param name="lookahead" value="175"/>
     </node>
 </launch>
