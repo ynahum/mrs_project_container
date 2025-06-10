@@ -23,7 +23,6 @@
 #include "nav2_mppi_controller/tools/trajectory_visualizer.hpp"
 #include "nav2_mppi_controller/models/constraints.hpp"
 #include "nav2_mppi_controller/tools/utils.hpp"
-#include "my_car/debug_logger.hpp"
 
 #include "nav2_core/controller.hpp"
 #include "nav2_core/goal_checker.hpp"
@@ -76,7 +75,7 @@ public:
   /**
     * @brief Reset the controller state between tasks
     */
-  void reset();
+  void reset() override;
 
   /**
     * @brief Main method to compute velocities using the optimizer
@@ -107,11 +106,12 @@ protected:
     * @brief Visualize trajectories
     * @param transformed_plan Transformed input plan
     */
-  void visualize(nav_msgs::msg::Path transformed_plan);
+  void visualize(
+    nav_msgs::msg::Path transformed_plan,
+    const builtin_interfaces::msg::Time & cmd_stamp);
 
   std::string name_;
   rclcpp_lifecycle::LifecycleNode::WeakPtr parent_;
-  rclcpp::Clock::SharedPtr clock_;
   rclcpp::Logger logger_{rclcpp::get_logger("MPPIController")};
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
@@ -122,14 +122,6 @@ protected:
   TrajectoryVisualizer trajectory_visualizer_;
 
   bool visualize_;
-
-  double reset_period_;
-  // Last time computeVelocityCommands was called
-  rclcpp::Time last_time_called_;
-
-  bool enable_debug_prints_{false};
-  std::shared_ptr<DebugLogger> debug_logger_;
-
 };
 
 }  // namespace nav2_mppi_controller

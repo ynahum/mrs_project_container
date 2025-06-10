@@ -43,12 +43,6 @@ void PathHandler::initialize(
     getParam(inversion_yaw_tolerance, "inversion_yaw_tolerance", 0.4);
     inversion_locale_ = 0u;
   }
-  getParam(enable_debug_prints_, "enable_path_handler_prints", false);
-  if (enable_debug_prints_) {
-    debug_logger_ = std::make_shared<DebugLogger>("path_handler");
-    debug_logger_->write("start path handler debug prints");
-  }
-
 }
 
 std::pair<nav_msgs::msg::Path, PathIterator>
@@ -80,11 +74,6 @@ PathHandler::getGlobalPlanConsideringBoundsInCostmapFrame(
     nav2_util::geometry_utils::first_after_integrated_distance(
     closest_point, global_plan_up_to_inversion_.poses.end(), prune_distance_);
 
-  if (nullptr != debug_logger_) {
-    debug_logger_->write("getGlobalPlanConsideringBoundsInCostmapFrame global_plan_up_to_inversion_ size=", 
-      global_plan_up_to_inversion_.poses.size());
-  }
-
   unsigned int mx, my;
   // Find the furthest relevent pose on the path to consider within costmap
   // bounds
@@ -102,9 +91,6 @@ PathHandler::getGlobalPlanConsideringBoundsInCostmapFrame(
     if (!costmap_->getCostmap()->worldToMap(
         costmap_plan_pose.pose.position.x, costmap_plan_pose.pose.position.y, mx, my))
     {
-      if (nullptr != debug_logger_) {
-        debug_logger_->write("transformed plan cut due to costmap, size=", transformed_plan.poses.size());
-      }
       return {transformed_plan, closest_point};
     }
 
@@ -119,12 +105,12 @@ geometry_msgs::msg::PoseStamped PathHandler::transformToGlobalPlanFrame(
   const geometry_msgs::msg::PoseStamped & pose)
 {
   if (global_plan_up_to_inversion_.poses.empty()) {
-    throw std::runtime_error("Received plan with zero length");
+    throw nav2_core::InvalidPath("Received plan with zero length");
   }
 
   geometry_msgs::msg::PoseStamped robot_pose;
   if (!transformPose(global_plan_up_to_inversion_.header.frame_id, pose, robot_pose)) {
-    throw std::runtime_error(
+    throw nav2_core::ControllerTFError(
             "Unable to transform robot pose into global plan's frame");
   }
 
@@ -150,7 +136,7 @@ nav_msgs::msg::Path PathHandler::transformPath(
   }
 
   if (transformed_plan.poses.empty()) {
-    throw std::runtime_error("Resulting plan has 0 poses in it.");
+    throw nav2_core::InvalidPath("Resulting plan has 0 poses in it.");
   }
 
   return transformed_plan;
@@ -207,11 +193,11 @@ geometry_msgs::msg::PoseStamped PathHandler::getTransformedGoal(
   goal.header.frame_id = global_plan_.header.frame_id;
   goal.header.stamp = stamp;
   if (goal.header.frame_id.empty()) {
-    throw std::runtime_error("Goal pose has an empty frame_id");
+    throw nav2_core::ControllerTFError("Goal pose has an empty frame_id");
   }
   geometry_msgs::msg::PoseStamped transformed_goal;
   if (!transformPose(costmap_->getGlobalFrameID(), goal, transformed_goal)) {
-    throw std::runtime_error("Unable to transform goal pose into costmap frame");
+    throw nav2_core::ControllerTFError("Unable to transform goal pose into costmap frame");
   }
   return transformed_goal;
 }

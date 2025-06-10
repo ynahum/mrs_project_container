@@ -28,6 +28,7 @@ void TrajectoryVisualizer::on_configure(
   trajectories_publisher_ =
     node->create_publisher<visualization_msgs::msg::MarkerArray>("/trajectories", 1);
   transformed_path_pub_ = node->create_publisher<nav_msgs::msg::Path>("transformed_global_plan", 1);
+  optimal_path_pub_ = node->create_publisher<nav_msgs::msg::Path>("optimal_trajectory", 1);
   parameters_handler_ = parameters_handler;
 
   auto getParam = parameters_handler->getParamGetter(name + ".TrajectoryVisualizer");
@@ -42,22 +43,27 @@ void TrajectoryVisualizer::on_cleanup()
 {
   trajectories_publisher_.reset();
   transformed_path_pub_.reset();
+  optimal_path_pub_.reset();
 }
 
 void TrajectoryVisualizer::on_activate()
 {
   trajectories_publisher_->on_activate();
   transformed_path_pub_->on_activate();
+  optimal_path_pub_->on_activate();
 }
 
 void TrajectoryVisualizer::on_deactivate()
 {
   trajectories_publisher_->on_deactivate();
   transformed_path_pub_->on_deactivate();
+  optimal_path_pub_->on_deactivate();
 }
 
 void TrajectoryVisualizer::add(
-  const xt::xtensor<float, 2> & trajectory, const std::string & marker_namespace)
+  const xt::xtensor<float, 2> & trajectory,
+  const std::string & marker_namespace,
+  const builtin_interfaces::msg::Time & cmd_stamp)
 {
   auto & size = trajectory.shape()[0];
   if (!size) {
@@ -76,8 +82,21 @@ void TrajectoryVisualizer::add(
       auto marker = utils::createMarker(
         marker_id_++, pose, scale, color, frame_id_, marker_namespace);
       points_->markers.push_back(marker);
+
+      // populate optimal path
+      geometry_msgs::msg::PoseStamped pose_stamped;
+      pose_stamped.header.frame_id = frame_id_;
+      pose_stamped.pose = pose;
+
+      tf2::Quaternion quaternion_tf2;
+      quaternion_tf2.setRPY(0., 0., trajectory(i, 2));
+      pose_stamped.pose.orientation = tf2::toMsg(quaternion_tf2);
+
+      optimal_path_->poses.push_back(pose_stamped);
     };
 
+  optimal_path_->header.stamp = cmd_stamp;
+  optimal_path_->header.frame_id = frame_id_;
   for (size_t i = 0; i < size; i++) {
     add_marker(i);
   }
@@ -93,13 +112,12 @@ void TrajectoryVisualizer::add(
   for (size_t i = 0; i < shape[0]; i += trajectory_step_) {
     for (size_t j = 0; j < shape[1]; j += time_step_) {
       const float j_flt = static_cast<float>(j);
-      float red_component = 1.0f;
-      float green_component = 1.0f - (j_flt / (2 * shape_1));
-      float blue_component = 1.0f;
+      float blue_component = 1.0f - j_flt / shape_1;
+      float green_component = j_flt / shape_1;
 
       auto pose = utils::createPose(trajectories.x(i, j), trajectories.y(i, j), 0.03);
       auto scale = utils::createScale(0.03, 0.03, 0.03);
-      auto color = utils::createColor(red_component, green_component, blue_component, 1);
+      auto color = utils::createColor(0, green_component, blue_component, 1);
       auto marker = utils::createMarker(
         marker_id_++, pose, scale, color, frame_id_, marker_namespace);
 
@@ -112,12 +130,17 @@ void TrajectoryVisualizer::reset()
 {
   marker_id_ = 0;
   points_ = std::make_unique<visualization_msgs::msg::MarkerArray>();
+  optimal_path_ = std::make_unique<nav_msgs::msg::Path>();
 }
 
 void TrajectoryVisualizer::visualize(const nav_msgs::msg::Path & plan)
 {
   if (trajectories_publisher_->get_subscription_count() > 0) {
     trajectories_publisher_->publish(std::move(points_));
+  }
+
+  if (optimal_path_pub_->get_subscription_count() > 0) {
+    optimal_path_pub_->publish(std::move(optimal_path_));
   }
 
   reset();
