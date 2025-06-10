@@ -19,7 +19,7 @@
 #include "nav2_mppi_controller/critic_function.hpp"
 #include "nav2_mppi_controller/models/state.hpp"
 #include "nav2_mppi_controller/tools/utils.hpp"
-#include "nav2_core/controller_exceptions.hpp"
+#include "nav2_core/exceptions.hpp"
 
 namespace mppi::critics
 {

@@ -95,7 +95,7 @@ void PathAngleCritic::score(CriticData & data)
       }
       break;
     default:
-      throw nav2_core::ControllerException("Invalid path angle mode!");
+      throw std::runtime_error("Invalid path angle mode!");
   }
 
   auto yaws_between_points = xt::atan2(
