@@ -43,6 +43,12 @@ void PathHandler::initialize(
     getParam(inversion_yaw_tolerance, "inversion_yaw_tolerance", 0.4);
     inversion_locale_ = 0u;
   }
+  getParam(enable_debug_prints_, "enable_path_handler_prints", false);
+  if (enable_debug_prints_) {
+    debug_logger_ = std::make_shared<DebugLogger>("path_handler");
+    debug_logger_->write("start path handler debug prints");
+  }
+
 }
 
 std::pair<nav_msgs::msg::Path, PathIterator>
@@ -74,6 +80,11 @@ PathHandler::getGlobalPlanConsideringBoundsInCostmapFrame(
     nav2_util::geometry_utils::first_after_integrated_distance(
     closest_point, global_plan_up_to_inversion_.poses.end(), prune_distance_);
 
+  if (nullptr != debug_logger_) {
+    debug_logger_->write("getGlobalPlanConsideringBoundsInCostmapFrame global_plan_up_to_inversion_ size=", 
+      global_plan_up_to_inversion_.poses.size());
+  }
+
   unsigned int mx, my;
   // Find the furthest relevent pose on the path to consider within costmap
   // bounds
@@ -91,6 +102,9 @@ PathHandler::getGlobalPlanConsideringBoundsInCostmapFrame(
     if (!costmap_->getCostmap()->worldToMap(
         costmap_plan_pose.pose.position.x, costmap_plan_pose.pose.position.y, mx, my))
     {
+      if (nullptr != debug_logger_) {
+        debug_logger_->write("transformed plan cut due to costmap, size=", transformed_plan.poses.size());
+      }
       return {transformed_plan, closest_point};
     }
 

@@ -32,6 +32,7 @@
 #include "nav2_core/exceptions.hpp"
 
 #include "nav2_mppi_controller/tools/parameters_handler.hpp"
+#include "my_car/debug_logger.hpp"
 
 namespace mppi
 {
@@ -162,6 +163,9 @@ protected:
   float inversion_yaw_tolerance{0.4};
   bool enforce_path_inversion_{false};
   unsigned int inversion_locale_{0u};
+  bool enable_debug_prints_{false};
+  std::shared_ptr<DebugLogger> debug_logger_;
+
 };
 }  // namespace mppi
 
