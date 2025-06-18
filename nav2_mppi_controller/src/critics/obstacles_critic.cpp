@@ -94,7 +94,8 @@ float ObstaclesCritic::findCircumscribedCost(
     getParam(inflation_scale_factor_, "cost_scaling_factor", 10.0);
     getParam(inflation_radius_, "inflation_radius", 0.55);
   }
-  if (!inflation_layer_found) {  
+
+  if (!inflation_layer_found) {
     RCLCPP_WARN(
       logger_,
       "No inflation layer found in costmap configuration. "

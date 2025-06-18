@@ -43,9 +43,9 @@ void CostCritic::initialize()
   parameters_handler_->addDynamicParamCallback(name_ + ".cost_weight", weightDynamicCb);
 
   collision_checker_.setCostmap(costmap_);
-  possible_collision_cost_ = findCircumscribedCost(costmap_ros_);
+  possibly_inscribed_cost_ = findCircumscribedCost(costmap_ros_);
 
-  if (possible_collision_cost_ < 1.0f) {
+  if (possibly_inscribed_cost_ < 1.0f) {
     RCLCPP_ERROR(
       logger_,
       "Inflation layer either not found or inflation is not set sufficiently for "
@@ -82,6 +82,7 @@ void CostCritic::initialize()
 float CostCritic::findCircumscribedCost(
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap)
 {
+  bool inflation_layer_found = false;
   double result = -1.0;
   const double circum_radius = costmap->getLayeredCostmap()->getCircumscribedRadius();
   if (static_cast<float>(circum_radius) == circumscribed_radius_) {
@@ -90,26 +91,24 @@ float CostCritic::findCircumscribedCost(
   }
 
   // check if the costmap has an inflation layer
-  const auto inflation_layer = nav2_costmap_2d::InflationLayer::getInflationLayer(
-    costmap,
-    inflation_layer_name_);
-  if (inflation_layer != nullptr) {
-    const double resolution = costmap->getCostmap()->getResolution();
-    double inflation_radius = inflation_layer->getInflationRadius();
-    if (inflation_radius < circum_radius) {
-      RCLCPP_ERROR(
-        rclcpp::get_logger("computeCircumscribedCost"),
-        "The inflation radius (%f) is smaller than the circumscribed radius (%f) "
-        "If this is an SE2-collision checking plugin, it cannot use costmap potential "
-        "field to speed up collision checking by only checking the full footprint "
-        "when robot is within possibly-inscribed radius of an obstacle. This may "
-        "significantly slow down planning times!",
-        inflation_radius, circum_radius);
-      result = 0.0;
-      return result;
+  for (auto layer = costmap->getLayeredCostmap()->getPlugins()->begin();
+    layer != costmap->getLayeredCostmap()->getPlugins()->end();
+    ++layer)
+  {
+    auto inflation_layer = std::dynamic_pointer_cast<nav2_costmap_2d::InflationLayer>(*layer);
+    if (!inflation_layer ||
+      (!inflation_layer_name_.empty() &&
+      inflation_layer->getName() != inflation_layer_name_))
+    {
+      continue;
     }
+
+    inflation_layer_found = true;
+    const double resolution = costmap->getCostmap()->getResolution();
     result = inflation_layer->computeCost(circum_radius / resolution);
-  } else {
+  }
+
+  if (!inflation_layer_found) {
     RCLCPP_WARN(
       logger_,
       "No inflation layer found in costmap configuration. "
@@ -144,7 +143,7 @@ void CostCritic::score(CriticData & data)
 
   if (consider_footprint_) {
     // footprint may have changed since initialization if user has dynamic footprints
-    possible_collision_cost_ = findCircumscribedCost(costmap_ros_);
+    possibly_inscribed_cost_ = findCircumscribedCost(costmap_ros_);
   }
 
   // If near the goal, don't apply the preferential term since the goal is near obstacles

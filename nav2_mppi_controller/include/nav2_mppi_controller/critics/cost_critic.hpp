@@ -61,7 +61,7 @@ protected:
     // If consider_footprint_ check footprint scort for collision
     float score_cost = cost;
     if (consider_footprint_ &&
-      (cost >= possible_collision_cost_ || possible_collision_cost_ < 1.0f))
+      (cost >= possibly_inscribed_cost_ || possibly_inscribed_cost_ < 1.0f))
     {
       score_cost = static_cast<float>(collision_checker_.footprintCostAtPose(
           static_cast<double>(x), static_cast<double>(y), static_cast<double>(theta),
@@ -125,7 +125,7 @@ protected:
 
   nav2_costmap_2d::FootprintCollisionChecker<nav2_costmap_2d::Costmap2D *>
   collision_checker_{nullptr};
-  float possible_collision_cost_;
+  float possibly_inscribed_cost_;
 
   bool consider_footprint_{true};
   bool is_tracking_unknown_{true};
