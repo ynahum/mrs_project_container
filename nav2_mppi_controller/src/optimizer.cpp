@@ -49,6 +49,12 @@ void Optimizer::initialize(
 
   getParams();
 
+  if (enable_debug_prints_) {
+    RCLCPP_INFO(logger_, "optimizer enable_debug_prints ");
+    debug_logger_ = std::make_shared<DebugLogger>("optimizer");
+    debug_logger_->write("start optimizer log");
+  }
+
   critic_manager_.on_configure(parent_, name_, costmap_ros_, parameters_handler_);
   noise_generator_.initialize(settings_, isHolonomic(), name_, parameters_handler_);
 
@@ -95,6 +101,7 @@ void Optimizer::getParams()
   }
 
   getParam(motion_model_name, "motion_model", std::string("DiffDrive"));
+  getParam(enable_debug_prints_, "enable_optimizer_prints", false);
 
   s.constraints = s.base_constraints;
   setMotionModel(motion_model_name);
@@ -173,6 +180,16 @@ geometry_msgs::msg::TwistStamped Optimizer::evalControl(
     shiftControlSequence();
   }
 
+  if (nullptr != debug_logger_) {
+    auto& position = state_.pose.pose.position;
+    auto& v_linear = state_.speed.linear;
+    float wz = state_.speed.angular.z;
+    float yaw = tf2::getYaw(state_.pose.pose.orientation);
+    debug_logger_->write("CVx=",control.twist.linear.x,",CVy=",
+        control.twist.linear.y, ",CWz=", control.twist.angular.z);
+    debug_logger_->write("X=",position.x, " ,Y=", position.y," ,yaw=", yaw);
+    debug_logger_->write("VX=",v_linear.x, " ,VY=", v_linear.y," ,Wz=", wz);
+  }
   return control;
 }
 
@@ -446,6 +463,9 @@ geometry_msgs::msg::TwistStamped Optimizer::getControlFromSequenceAsTwist(
 
 void Optimizer::setMotionModel(const std::string & model)
 {
+  if (nullptr != debug_logger_) {
+    debug_logger_->write("setMotionModel ", model);
+  }
   if (model == "DiffDrive") {
     motion_model_ = std::make_shared<DiffDriveMotionModel>();
   } else if (model == "Omni") {
@@ -463,6 +483,9 @@ void Optimizer::setMotionModel(const std::string & model)
 
 void Optimizer::setSpeedLimit(double speed_limit, bool percentage)
 {
+  if (nullptr != debug_logger_) {
+    debug_logger_->write("setSpeedLimit speed_limit=", speed_limit, ", percentage=", percentage);
+  }
   auto & s = settings_;
   if (speed_limit == nav2_costmap_2d::NO_SPEED_LIMIT) {
     s.constraints.vx_max = s.base_constraints.vx_max;
