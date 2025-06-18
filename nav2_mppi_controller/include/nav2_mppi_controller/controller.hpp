@@ -23,6 +23,7 @@
 #include "nav2_mppi_controller/tools/trajectory_visualizer.hpp"
 #include "nav2_mppi_controller/models/constraints.hpp"
 #include "nav2_mppi_controller/tools/utils.hpp"
+#include "my_car/debug_logger.hpp"
 
 #include "nav2_core/controller.hpp"
 #include "nav2_core/goal_checker.hpp"
@@ -122,6 +123,9 @@ protected:
   TrajectoryVisualizer trajectory_visualizer_;
 
   bool visualize_;
+
+  bool enable_debug_prints_{false};
+  std::shared_ptr<DebugLogger> debug_logger_;
 };
 
 }  // namespace nav2_mppi_controller

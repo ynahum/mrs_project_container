@@ -37,6 +37,11 @@ void MPPIController::configure(
   // Get high-level controller parameters
   auto getParam = parameters_handler_->getParamGetter(name_);
   getParam(visualize_, "visualize", false);
+  getParam(enable_debug_prints_, "enable_controller_prints", false);
+
+  if (enable_debug_prints_) {
+    debug_logger_ = std::make_shared<DebugLogger>("mppi_controller");
+  }
 
   // Configure composed objects
   optimizer_.initialize(parent_, name_, costmap_ros_, parameters_handler_.get());
@@ -45,7 +50,9 @@ void MPPIController::configure(
     parent_, name_,
     costmap_ros_->getGlobalFrameID(), parameters_handler_.get());
 
+  RCLCPP_INFO(logger_, "----------------------------------");
   RCLCPP_INFO(logger_, "Configured MPPI Controller: %s", name_.c_str());
+  RCLCPP_INFO(logger_, "----------------------------------");
 }
 
 void MPPIController::cleanup()
@@ -118,6 +125,9 @@ void MPPIController::visualize(
 
 void MPPIController::setPlan(const nav_msgs::msg::Path & path)
 {
+  if (nullptr != debug_logger_) {
+    debug_logger_->write("MPPIController::setPlan with size =", path.poses.size());
+  }
   path_handler_.setPath(path);
 }
 
