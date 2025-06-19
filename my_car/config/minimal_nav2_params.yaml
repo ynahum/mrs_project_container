@@ -70,6 +70,10 @@ controller_server:
       vx_min: -0.35
       vy_max: 2.5
       wz_max: 40.77 # max_wz = (max_vx=22.88 / WheelBase=0.324) * tan(delta_max=0.5236)
+      ax_max: 10.0 # need to check the actual max
+      ay_max: 10.0 # need to check the actual max
+      ax_min: -10.0 # need to check the actual max
+      az_max: 10.5 # max angular  rad/s^2. need to understand how much
       iteration_count: 1
       prune_distance: 10.7
       transform_tolerance: 0.1
