@@ -15,4 +15,4 @@ Nav2 MPPI controller related sources:
 This repo was used as internal git repository in docker container and should be pulled at start to its latest (unless a docker image version is commited and pushed).  
 The docker hub repository [here](https://hub.docker.com/repository/docker/ynahum/ad_f1_api/general).  
 
-For a more detailed documentation manual on what was done and what can be done next, see the pdf in repo [TODO]
+For a more detailed documentation manual on what was done and what can be done next, see the pdf in repo [here](./race_car_project_report.pdf)
