@@ -1,5 +1,21 @@
 # **Nav2 MPPI controller use in F1TENTH Sim racing league**
-[![Video Title](https://img.youtube.com/vi/0iHc1kHdg5M/0.jpg)](https://www.youtube.com/watch?v=0iHc1kHdg5M)  
+
+### Demo
+
+<table>
+  <tr>
+    <td align="center"><a href="https://www.youtube.com/watch?v=0iHc1kHdg5M"><img src="https://img.youtube.com/vi/0iHc1kHdg5M/0.jpg" width="70%" alt="my mppi youtube demo file "></a></td>
+    <td align="center"><img src="./media/AutoDRIVESimulator2025-06-18.gif" width="90%" alt="sim"></td>
+    <td align="center"><img src="./media/mppi_speed_low_variance_rviz.gif" width="90%" alt="rviz"></td>
+  </tr>
+  <tr>
+    <td align="center">Youtube clip</td>
+    <td align="center">Simulator gif</td>
+    <td align="center">RViz gif</td>
+  </tr>
+</table>
+ 
+
 
 In this project we experiment using the Nav2 MPPI controller in the f1tenth sim racing league.  
 This is MPPI contoller is one of several implemented in the Nav2 stack developed above ROS2.  
